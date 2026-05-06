@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Acceso solo para el owner autenticado de cada proyecto.
+    // La estructura es: projects/{projectId}/...
+    // Un único owner de momento; si en el futuro se añade colaboración,
+    // se puede ampliar leyendo un campo members[] del doc projects/{projectId}.
+    function isOwner(projectId) {
+      return request.auth != null &&
+             exists(/databases/$(database)/documents/projects/$(projectId)) &&
+             get(/databases/$(database)/documents/projects/$(projectId)).data.owner == request.auth.uid;
+    }
+
+    match /projects/{projectId} {
+      allow read: if isOwner(projectId);
+      // Permitir crear el doc solo si apuntas al uid autenticado como owner.
+      allow create: if request.auth != null &&
+                      request.resource.data.owner == request.auth.uid;
+      // Solo el owner puede modificar el doc del proyecto.
+      allow update, delete: if isOwner(projectId);
+
+      // Todo lo que cuelga dentro queda cubierto por el owner.
+      match /{document=**} {
+        allow read, write: if isOwner(projectId);
+      }
+    }
+  }
+}

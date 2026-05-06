@@ -1,0 +1,19 @@
+{
+  "_comment": "Sugerencias de categoría basadas en palabras clave en merchant/alias/concepto. Se usan como fallback cuando no hay transacciones similares ya categorizadas. Patrones = substring case-insensitive. Primera regla que matchea gana.",
+  "rules": [
+    {"patterns": ["restaurant", "restaurante"], "cat": "Food & Drink", "sub": "Cafes & Restaurants"},
+    {"patterns": ["café", "cafe ", "coffee", "taverna", "bistro", "pizzería", "pizzeria", "pizza", "bar "], "cat": "Food & Drink", "sub": "Cafes & Restaurants"},
+    {"patterns": ["bakery", "pastelería", "pasteleria", "pastisseria", "forn", "panadería", "panaderia"], "cat": "Food & Drink", "sub": "Bakery"},
+    {"patterns": ["supermercado", "supermercat", "supermarket", "mercat"], "cat": "Food & Drink", "sub": "Supermarket"},
+    {"patterns": ["farmacia", "farmàcia", "pharmacy"], "cat": "Health & Wellness", "sub": "Pharmacy"},
+    {"patterns": ["gym", "fitness", "sport club", "crossfit"], "cat": "Health & Wellness", "sub": "Gym & Fitness"},
+    {"patterns": ["veterina", "vet "], "cat": "Health & Wellness", "sub": "Vet"},
+    {"patterns": ["hotel", "hostel", "albergue", "apartament", "apartamento"], "cat": "Leisure", "sub": "Travel & Hotels"},
+    {"patterns": ["airline", "airways", "airport", "vuelo", "flight"], "cat": "Transport", "sub": "Trains & Flights"},
+    {"patterns": ["taxi", "cab ", "rideshare"], "cat": "Transport", "sub": "Taxi & Rideshare"},
+    {"patterns": ["parking", "aparcam", "peaje", "toll"], "cat": "Transport", "sub": "Tolls & Parking"},
+    {"patterns": ["gasolin", "repsol", "cepsa", "shell ", " bp "], "cat": "Transport", "sub": "Fuel"},
+    {"patterns": ["renfe", "ouigo", "tren ", "train", "metro", " bus"], "cat": "Transport", "sub": "Public Transport"},
+    {"patterns": ["cinema", "cine ", "teatro", "concert", "ticket"], "cat": "Leisure", "sub": "Tickets & Events"}
+  ]
+}

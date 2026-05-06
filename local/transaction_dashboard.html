@@ -1,0 +1,1229 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f6f2">
+<title>Busvil Finance</title>
+<style>
+:root{
+  --bg:#f7f6f2;
+  --panel:#ffffff;
+  --panel-2:#f1efe9;
+  --text:#1f1d19;
+  --text-2:#5a564e;
+  --text-3:#8a857b;
+  --border:#e5e1d8;
+  --border-strong:#d5d0c4;
+  --accent:#1f1d19;
+  --accent-text:#ffffff;
+  --info:#2d6cdf;
+  --ok:#1D9E75;
+  --err:#D85A30;
+  --radius-sm:8px;
+  --radius-md:12px;
+  --radius-lg:16px;
+  --font-sans:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg)}
+body{font-family:var(--font-sans);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.4;min-height:100vh;padding:32px 24px}
+.wrap{max-width:1200px;margin:0 auto}
+
+.header{display:flex;flex-direction:column;margin-bottom:32px;gap:20px}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.title-area h1{font-size:32px;font-weight:600;letter-spacing:-0.02em;color:var(--text)}
+.title-area p{font-size:15px;color:var(--text-2);margin-top:6px}
+.header-aux{display:flex;align-items:flex-end;gap:10px;flex-shrink:0}
+.dataset-aux{display:flex;flex-direction:column;align-items:flex-start;gap:4px;flex-shrink:0}
+.dataset-aux label{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;font-weight:500}
+.dataset-aux select{font-size:12px;padding:5px 10px;height:28px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--panel);color:var(--text-2);cursor:pointer;font-family:inherit;max-width:240px}
+.dataset-aux select:focus{outline:2px solid var(--accent);outline-offset:-1px;color:var(--text)}
+.dataset-aux select:hover{color:var(--text)}
+.aux-btn{font-size:12px;padding:0 10px;height:28px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--panel);color:var(--text-2);cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap}
+.aux-btn:hover{background:var(--panel-2);color:var(--text)}
+.dataset-row{display:flex;gap:6px;align-items:center}
+.icon-btn{width:28px;height:28px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--panel);color:var(--text-2);cursor:pointer;font-family:inherit;font-size:13px;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.icon-btn:hover,.icon-btn[aria-expanded="true"]{background:var(--panel-2);color:var(--text)}
+.drawer-backdrop{position:fixed;inset:0;background:rgba(31,29,25,0.35);z-index:50;opacity:0;transition:opacity 0.2s;pointer-events:none}
+.drawer-backdrop.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(380px,92vw);background:var(--panel);border-left:1px solid var(--border);box-shadow:-8px 0 24px rgba(0,0,0,0.08);z-index:51;transform:translateX(100%);transition:transform 0.25s ease;display:flex;flex-direction:column}
+.drawer.open{transform:translateX(0)}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.drawer-header h3{font-size:14px;font-weight:600;letter-spacing:-0.01em;color:var(--text);margin:0}
+.drawer-body{padding:20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+.account-row{display:flex;flex-direction:column;gap:4px}
+.account-row label{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;font-weight:500}
+.account-row input{font-size:14px;padding:8px 12px;height:38px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--panel);color:var(--text);font-family:inherit}
+.account-row input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.account-hint{font-size:12px;color:var(--text-3);margin:0}
+.account-kind-tag{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;font-weight:500;color:var(--text-2);background:var(--panel-2);border:1px solid var(--border);border-radius:999px;padding:4px 12px;align-self:flex-start}
+/* Por defecto (sin clase en el drawer) mostramos campos de cuenta */
+.drawer[data-kind="account"] .account-row[data-kind="credit_card"]{display:none}
+.drawer[data-kind="credit_card"] .account-row[data-kind="account"]{display:none}
+.drawer:not([data-kind]) .account-row[data-kind]{display:none}
+.account-row input[readonly]{background:var(--panel-2);color:var(--text-2);cursor:not-allowed}
+
+.filters{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.filters .field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.filters label{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;font-weight:500}
+.filters input[type=date],.filters select{font-size:14px;padding:8px 12px;height:38px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--panel);color:var(--text);cursor:pointer;font-family:inherit;min-width:0}
+.filters select{min-width:220px}
+.filters input[type=date]:focus,.filters select:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.filters .range-field{flex:0 0 auto}
+.filters .range-inputs{display:flex;align-items:center;gap:6px}
+.filters .range-inputs input{width:140px;min-width:0}
+.filters .range-sep{color:var(--text-3);font-size:13px}
+.filters #upload-btn{align-self:flex-end;height:38px}
+.filters #save-status{align-self:flex-end;padding-bottom:10px}
+.filters #download-transactions-btn{align-self:flex-end;height:38px}
+
+.summary-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px 20px}
+.card .label{font-size:12px;color:var(--text-3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;font-weight:500}
+.card .val{font-size:26px;font-weight:600;letter-spacing:-0.01em}
+.card .period-val{font-size:14px;line-height:1.35;font-weight:500;display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.card .period-val > *{align-self:stretch}
+.card .period-val .period-arrow{color:var(--text-3);font-weight:400;font-size:12px;line-height:1;text-align:center}
+
+.main-area{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start}
+.chart-area,.list-area{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;min-width:0}
+.chart-area{position:relative}
+.reset-corner{position:absolute;top:12px;right:12px;background:var(--panel);border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:6px 10px;font-size:12px;color:var(--text-2);cursor:pointer;font-family:inherit;z-index:2}
+.reset-corner:hover{background:var(--panel-2);color:var(--text)}
+
+.breadcrumb{font-size:13px;color:var(--text-2);margin-bottom:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.breadcrumb span{cursor:pointer;color:var(--info)}
+.breadcrumb span:hover{text-decoration:underline}
+.breadcrumb .sep{color:var(--text-3);cursor:default}
+
+.donut-box{position:relative;width:380px;height:380px;max-width:100%;aspect-ratio:1/1;margin:8px auto}
+#donut-canvas{display:block;width:100% !important;height:100% !important}
+.center-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;width:140px}
+.center-text .ct-val{font-size:22px;font-weight:600;letter-spacing:-0.01em}
+.center-text .ct-label{font-size:12px;color:var(--text-3);margin-top:4px}
+
+.hint{font-size:12px;color:var(--text-3);text-align:center;margin-top:12px}
+
+.legend{display:flex;flex-direction:column;gap:4px;margin-top:16px}
+.leg-item{display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 10px;border-radius:var(--radius-sm);transition:background 0.1s}
+.leg-item:hover{background:var(--panel-2)}
+.leg-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.leg-name{font-size:14px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.leg-val{font-size:14px;color:var(--text-2);font-weight:500}
+
+.tx-list{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:var(--panel)}
+.tx-list-header{padding:12px 16px;background:var(--panel-2);font-size:13px;color:var(--text-2);display:flex;justify-content:space-between;align-items:center;font-weight:500;gap:10px}
+.tx-list-header-right{display:flex;align-items:center;gap:10px}
+.sort-menu{position:relative}
+.sort-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:0 4px 12px rgba(0,0,0,0.08);padding:4px;z-index:10;min-width:220px;display:flex;flex-direction:column}
+.sort-dropdown[hidden]{display:none}
+.sort-option{font-family:inherit;font-size:13px;text-align:left;padding:8px 12px;border:0;background:transparent;color:var(--text);cursor:pointer;border-radius:var(--radius-sm);white-space:nowrap}
+.sort-option:hover{background:var(--panel-2)}
+.sort-option.active{background:var(--panel-2);font-weight:500}
+.sort-option.active::before{content:"✓ ";color:var(--ok)}
+.tx-scroll{max-height:560px;overflow-y:auto}
+.tx-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--border);cursor:pointer;transition:background 0.1s}
+.tx-row:first-child{border-top:none}
+.tx-row:hover{background:var(--panel-2)}
+.tx-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.tx-info{flex:1;min-width:0}
+.tx-merchant{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.alias-badge{font-size:10px;color:var(--text-3);margin-left:6px;vertical-align:middle}
+.tx-date{font-size:12px;color:var(--text-3);margin-top:2px}
+.tx-amount{font-size:14px;font-weight:600;flex-shrink:0;text-align:right;letter-spacing:-0.01em}
+.tx-sub{font-size:11px;color:var(--text-3);margin-top:2px;text-align:right}
+
+.back-btn{font-size:13px;color:var(--info);cursor:pointer;padding:6px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--panel);display:inline-flex;align-items:center;gap:4px;font-family:inherit}
+.back-btn:hover{background:var(--panel-2)}
+
+.tx-row.editing{flex-wrap:wrap;background:var(--panel-2)}
+.tx-edit-bar{display:flex;gap:8px;width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-strong);flex-wrap:wrap}
+.tx-edit-bar select{flex:1;min-width:140px;font-size:13px;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--panel);color:var(--text);font-family:inherit}
+.tx-alias-bar{align-items:center}
+.alias-label{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;font-weight:500;min-width:50px}
+.alias-input{flex:1;font-size:13px;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--panel);color:var(--text);font-family:inherit}
+.alias-input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+
+.tx-suggest{width:100%;padding-top:6px;font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:6px}
+.tx-suggest-label{color:var(--text-3)}
+.tx-suggest-link{color:var(--info);text-decoration:underline;cursor:pointer}
+.tx-suggest-link:hover{color:var(--text);text-decoration:underline}
+
+.save-btn{font-size:13px;padding:8px 14px;border-radius:var(--radius-sm);border:1px solid var(--accent);background:var(--accent);color:var(--accent-text);cursor:pointer;font-weight:500;font-family:inherit}
+.save-btn:hover{opacity:0.88}
+
+.save-status{font-size:12px;color:var(--text-3);transition:opacity 0.2s;min-width:110px;font-weight:500}
+.save-status.ok{color:var(--ok)}
+.save-status.err{color:var(--err)}
+
+.tx-search{padding:10px 16px;border-top:1px solid var(--border);background:var(--panel)}
+.tx-search input{width:100%;font-size:13px;padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--panel);color:var(--text);font-family:inherit}
+.tx-search input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+
+.tx-details{width:100%;margin-top:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text-2);display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.tx-details dt{color:var(--text-3);white-space:nowrap;font-weight:500}
+.tx-details dd{color:var(--text);word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px}
+.tx-check,.leg-check{flex-shrink:0;width:16px;height:16px;cursor:pointer;accent-color:var(--accent)}
+.tx-row.muted,.leg-item.muted{opacity:0.4}
+.tx-row.muted:hover,.leg-item.muted:hover{opacity:0.6}
+.tx-amount.positive{color:var(--ok)}
+
+/* Tablet y ventana estrecha de escritorio: apila gráfico + lista */
+@media(max-width:900px){
+  body{padding:20px 16px}
+  .main-area{grid-template-columns:1fr;gap:16px}
+  .title-area h1{font-size:26px}
+  .header{gap:16px}
+  .header-top{flex-direction:column;align-items:stretch;gap:12px}
+  .header-aux{flex-direction:row;align-items:flex-end;gap:10px;flex-wrap:wrap}
+  .dataset-aux{align-items:stretch;flex:1;min-width:0}
+  .dataset-aux select{max-width:100%}
+  .filters{width:100%;flex-wrap:wrap;gap:10px}
+  .filters .range-field{flex:1 1 100%}
+  .filters .range-inputs input{flex:1;min-width:0;width:auto}
+  .summary-cards{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+  .donut-box{width:100%;max-width:320px;height:auto}
+}
+
+/* Mobile */
+@media(max-width:640px){
+  body{padding:16px 12px}
+  .wrap{max-width:100%}
+  .title-area h1{font-size:22px}
+  .title-area p{font-size:13px}
+
+  .header{gap:14px;margin-bottom:20px}
+  .filters input[type=date],.filters select{font-size:16px;height:44px}
+  .filters #upload-btn{height:44px;font-size:14px}
+
+  .summary-cards{grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
+  .card{padding:12px 14px}
+  .card .val{font-size:20px}
+  .card .label{font-size:10px}
+  .card #s-period{font-size:14px !important}
+
+  .chart-area,.list-area{padding:14px;border-radius:var(--radius-md)}
+  .reset-corner{top:10px;right:10px;font-size:11px;padding:5px 8px}
+
+  .donut-box{max-width:260px}
+  .center-text{width:100px}
+  .center-text .ct-val{font-size:18px}
+  .center-text .ct-label{font-size:11px}
+
+  .leg-item{padding:10px 8px;gap:10px}
+  .leg-name{font-size:13px}
+  .leg-val{font-size:13px}
+
+  .tx-list-header{padding:10px 12px}
+  .tx-search{padding:8px 12px}
+  .tx-search input{font-size:16px;height:40px}
+  .tx-scroll{max-height:60vh}
+  .tx-row{padding:12px;gap:10px}
+  .tx-merchant{font-size:13px}
+  .tx-amount{font-size:14px}
+  .tx-date,.tx-sub{font-size:11px}
+
+  .tx-edit-bar{gap:6px}
+  .tx-edit-bar select{min-width:0;flex-basis:calc(50% - 3px);font-size:14px;height:40px}
+  .tx-edit-bar .save-btn{flex-basis:calc(50% - 3px);height:40px}
+
+  .tx-details{grid-template-columns:1fr;gap:2px 0;padding:10px}
+  .tx-details dt{font-size:10px;text-transform:uppercase;letter-spacing:0.04em;margin-top:6px}
+  .tx-details dt:first-child{margin-top:0}
+  .tx-details dd{font-size:12px}
+}
+</style>
+
+<div class="wrap">
+
+<div class="header">
+  <div class="header-top">
+    <div class="title-area">
+      <h1 id="dash-title">Gastos por categoría</h1>
+      <p id="dash-sub">Haz clic en una sección para ver subcategorías</p>
+    </div>
+    <div class="header-aux">
+      <div class="dataset-aux">
+        <label for="dataset-select">Dataset</label>
+        <div class="dataset-row">
+          <select id="dataset-select"></select>
+          <button class="icon-btn" id="account-toggle" title="Detalles de la cuenta" aria-expanded="false">ⓘ</button>
+        </div>
+      </div>
+      <button class="aux-btn" id="upload-btn" title="Cargar un XLS nuevo">+ Cargar XLS</button>
+      <input type="file" id="upload-input" accept=".xls,.xlsx" style="display:none">
+    </div>
+  </div>
+  <div class="filters">
+    <div class="field range-field">
+      <label>Rango</label>
+      <div class="range-inputs">
+        <input type="date" id="date-from" value="2025-09-25" aria-label="Desde">
+        <span class="range-sep">→</span>
+        <input type="date" id="date-to" value="2026-05-04" aria-label="Hasta">
+      </div>
+    </div>
+    <span id="save-status" class="save-status"></span>
+    <button class="save-btn" id="download-transactions-btn" style="display:none">Descargar JSON</button>
+  </div>
+</div>
+
+<div class="summary-cards">
+  <div class="card"><div class="label">Transacciones</div><div class="val" id="s-count">—</div></div>
+  <div class="card"><div class="label">Gastos</div><div class="val" id="s-total" style="color:var(--err)">—</div></div>
+  <div class="card"><div class="label">Ingresos</div><div class="val" id="s-income" style="color:var(--ok)">—</div></div>
+  <div class="card"><div class="label">Balance</div><div class="val" id="s-balance">—</div></div>
+  <div class="card"><div class="label">Periodo</div><div class="val period-val" id="s-period">—</div></div>
+</div>
+
+<div class="main-area" id="main-area">
+  <div class="chart-area">
+    <button class="reset-corner" id="reset-selection-btn" title="Resetear filtros y selección">↻ Reset</button>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div class="donut-box">
+      <canvas id="donut-canvas" width="380" height="380" role="img" aria-label="Gráfico donut de gastos por categoría">Distribución de gastos por categoría</canvas>
+      <div class="center-text" id="center-text">
+        <div class="ct-val" id="ct-val">—</div>
+        <div class="ct-label" id="ct-label">Total</div>
+      </div>
+    </div>
+    <div class="hint" id="hint-text">Haz clic en una sección para navegar</div>
+    <div class="legend" id="legend"></div>
+  </div>
+  <div class="list-area">
+    <div class="tx-list">
+      <div class="tx-list-header">
+        <span id="list-title">Todas las transacciones</span>
+        <div class="tx-list-header-right">
+          <span id="list-count" style="font-weight:500"></span>
+          <div class="sort-menu">
+            <button class="icon-btn" id="sort-toggle" title="Ordenar" aria-haspopup="menu" aria-expanded="false">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+            </button>
+            <div class="sort-dropdown" id="sort-dropdown" role="menu" hidden>
+              <button class="sort-option" data-sort="date-desc">Fecha: más reciente primero</button>
+              <button class="sort-option" data-sort="date-asc">Fecha: más antiguo primero</button>
+              <button class="sort-option" data-sort="amount-desc">Importe: mayor primero</button>
+              <button class="sort-option" data-sort="amount-asc">Importe: menor primero</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tx-search">
+        <input type="search" id="tx-search-input" placeholder="Buscar en comercio, concepto…" autocomplete="off">
+      </div>
+      <div class="tx-scroll" id="tx-scroll"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="drawer-backdrop" id="account-backdrop" hidden></div>
+<aside class="drawer" id="account-panel" aria-hidden="true" aria-label="Detalles de la cuenta">
+  <div class="drawer-header">
+    <h3>Detalles de la cuenta</h3>
+    <button class="icon-btn" id="account-close" aria-label="Cerrar">×</button>
+  </div>
+  <div class="drawer-body">
+    <div class="account-kind-tag" id="acct-kind-tag"></div>
+    <div class="account-row">
+      <label for="acct-alias">Alias</label>
+      <input type="text" id="acct-alias" placeholder="Ej. Cuenta principal">
+    </div>
+    <div class="account-row">
+      <label for="acct-bank">Banco</label>
+      <input type="text" id="acct-bank" placeholder="Ej. CaixaBank">
+    </div>
+    <div class="account-row" data-kind="account">
+      <label for="acct-iban">IBAN</label>
+      <input type="text" id="acct-iban" placeholder="ES00 0000 0000 0000 0000 0000">
+    </div>
+    <div class="account-row" data-kind="credit_card">
+      <label for="acct-card-type">Tipo de tarjeta</label>
+      <input type="text" id="acct-card-type" placeholder="Ej. VISA, Mastercard">
+    </div>
+    <div class="account-row" data-kind="credit_card">
+      <label for="acct-last4">Últimos 4 dígitos</label>
+      <input type="text" id="acct-last4" readonly>
+    </div>
+    <div class="account-row" data-kind="credit_card">
+      <label for="acct-holder">Titular</label>
+      <input type="text" id="acct-holder" placeholder="Nombre del titular (opcional)">
+    </div>
+    <p class="account-hint">Los cambios se guardan automáticamente.</p>
+  </div>
+</aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+
+const COLORS = {
+  'Transfers': '#73726c',
+  'Income': '#1D9E75',
+  'Shopping': '#7F77DD',
+  'Food & Drink': '#D85A30',
+  'Health & Wellness': '#378ADD',
+  'Leisure': '#D4537E',
+  'Transport': '#BA7517',
+  'Housing': '#8B5A2B',
+  'Subscriptions': '#2C7E7E',
+  'Investments': '#3B6D11',
+  'Personal': '#533AB7',
+  'Other': '#B4B2A9'
+};
+
+const SUB_COLORS = [
+  '#7F77DD','#AFA9EC','#CECBF6',
+  '#D85A30','#F0997B','#F5C4B3',
+  '#1D9E75','#5DCAA5','#9FE1CB',
+  '#378ADD','#85B7EB','#B5D4F4',
+  '#BA7517','#EF9F27','#FAC775',
+  '#D4537E','#ED93B1','#F4C0D1',
+  '#533AB7','#AFA9EC',
+  '#3B6D11','#97C459',
+];
+
+let chart = null;
+let currentCat = null;
+let filtered = [];
+let RAW = [];
+let TAXONOMY = {};
+let ACCOUNT = {iban:'', bank:'', alias:'', kind:'account', last4:'', card_type:'', holder:''};
+let dirty = false;
+let currentDataset = null;
+let excludedIds = new Set();
+let excludedCats = new Set();
+let excludedSubs = new Set();
+let searchText = '';
+let sortMode = 'date-desc';
+
+function fmt(n) {
+  return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
+}
+function fmtFull(n) {
+  return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n);
+}
+function fmtDateNatural(iso) {
+  if (!iso) return '—';
+  const [y, m, d] = iso.split('-').map(Number);
+  if (!y || !m || !d) return iso;
+  const months = ['ene','feb','mar','abr','may','jun','jul','ago','sept','oct','nov','dic'];
+  return `${d} ${months[m-1]} ${y}`;
+}
+
+function getFiltered() {
+  const from = document.getElementById('date-from').value;
+  const to = document.getElementById('date-to').value;
+  return RAW.filter(t => t.d >= from && t.d <= to);
+}
+
+function isIncluded(t) {
+  if (excludedCats.has(t.cat)) return false;
+  if (excludedSubs.has(t.cat + '::' + t.sub)) return false;
+  if (excludedIds.has(t.id)) return false;
+  return true;
+}
+
+function groupBy(arr, key) {
+  const map = {};
+  for (const t of arr) {
+    const k = t[key] || 'Unknown';
+    if (!map[k]) map[k] = {total:0, count:0, items:[]};
+    map[k].total += t.a;
+    map[k].count++;
+    map[k].items.push(t);
+  }
+  return map;
+}
+
+function render() {
+  filtered = getFiltered();
+  const included = filtered.filter(isIncluded);
+  const outTx = included.filter(t => t.dir === 'out');
+  const inTx = included.filter(t => t.dir === 'in');
+  const totalOut = outTx.reduce((s,t)=>s+t.a,0);
+  const totalIn = inTx.reduce((s,t)=>s+t.a,0);
+  const balance = totalIn - totalOut;
+
+  document.getElementById('s-count').textContent = included.length;
+  document.getElementById('s-total').textContent = fmt(totalOut);
+  document.getElementById('s-income').textContent = fmt(totalIn);
+  const balEl = document.getElementById('s-balance');
+  balEl.textContent = (balance >= 0 ? '+' : '') + fmt(balance);
+  balEl.style.color = balance >= 0 ? 'var(--ok)' : 'var(--err)';
+  const from = document.getElementById('date-from').value;
+  const to = document.getElementById('date-to').value;
+  document.getElementById('s-period').innerHTML =
+    fmtDateNatural(from) + '<span class="period-arrow">↓</span>' + fmtDateNatural(to);
+
+  const catsAll = groupBy(filtered, 'cat');
+  const donutTotal = included.reduce((s,t)=>s+t.a,0);
+
+  if (currentCat) {
+    renderSubcats(currentCat, catsAll[currentCat]?.items || []);
+  } else {
+    renderCats(catsAll, donutTotal);
+  }
+}
+
+function renderCats(cats, total) {
+  const sorted = Object.entries(cats).sort((a,b)=>b[1].total-a[1].total);
+
+  // Chart solo con categorías incluidas (no excluidas) y totales filtrados
+  const chartEntries = sorted
+    .filter(([name]) => !excludedCats.has(name))
+    .map(([name, d]) => {
+      const items = d.items.filter(t => !excludedIds.has(t.id) && !excludedSubs.has(t.cat + '::' + t.sub));
+      const sub = items.reduce((s,t)=>s+t.a,0);
+      return [name, {total: sub, count: items.length, items}];
+    })
+    .filter(e => e[1].total > 0);
+  const labels = chartEntries.map(e=>e[0]);
+  const data = chartEntries.map(e=>e[1].total);
+  const colors = labels.map(l=>COLORS[l]||'#888');
+
+  updateChart(labels, data, colors, chartEntries);
+  document.getElementById('ct-val').textContent = fmt(total);
+  document.getElementById('ct-label').textContent = 'Total';
+  document.getElementById('dash-title').textContent = 'Movimientos por categoría';
+  document.getElementById('dash-sub').textContent = 'Haz clic en una sección para ver subcategorías';
+  document.getElementById('hint-text').textContent = 'Clic en sección → subcategorías';
+  document.getElementById('breadcrumb').innerHTML = '';
+
+  // Legend muestra TODAS las categorías (incluidas las excluidas, en gris)
+  const legendEntries = sorted.map(([name, d]) => [name, d, COLORS[name]||'#888']);
+  renderLegend(legendEntries, false);
+  renderList(filtered, null, null);
+}
+
+function renderSubcats(catName, items) {
+  const subs = groupBy(items, 'sub');
+  const sorted = Object.entries(subs).sort((a,b)=>b[1].total-a[1].total);
+
+  const chartEntries = sorted
+    .filter(([name]) => !excludedSubs.has(catName + '::' + name))
+    .map(([name, d]) => {
+      const its = d.items.filter(t => !excludedIds.has(t.id));
+      return [name, {total: its.reduce((s,t)=>s+t.a,0), count: its.length, items: its}];
+    })
+    .filter(e => e[1].total > 0);
+  const labels = chartEntries.map(e=>e[0]);
+  const data = chartEntries.map(e=>e[1].total);
+  const colors = chartEntries.map((_,i)=>SUB_COLORS[i % SUB_COLORS.length]);
+  const total = items.filter(t => !excludedIds.has(t.id) && !excludedSubs.has(catName + '::' + t.sub)).reduce((s,t)=>s+t.a,0);
+
+  updateChart(labels, data, colors, chartEntries);
+  document.getElementById('ct-val').textContent = fmt(total);
+  document.getElementById('ct-label').textContent = catName;
+  document.getElementById('dash-title').textContent = catName;
+  document.getElementById('dash-sub').textContent = 'Subcategorías · clic en sección para ver transacciones';
+  document.getElementById('hint-text').textContent = 'Clic en sección → lista de transacciones';
+  document.getElementById('breadcrumb').innerHTML = '<span onclick="goBack()">Todas</span><span class="sep"> › </span><span style="color:var(--text)">' + catName + '</span>';
+
+  const legendEntries = sorted.map(([name, d], i) => [name, d, SUB_COLORS[i % SUB_COLORS.length]]);
+  renderLegend(legendEntries, true, catName);
+  renderList(items, null, null);
+}
+
+function renderLegend(entries, isSub, catName) {
+  const el = document.getElementById('legend');
+  el.innerHTML = '';
+  const includedTotal = entries.reduce((s,[name,d]) => {
+    const isExcluded = isSub ? excludedSubs.has(catName + '::' + name) : excludedCats.has(name);
+    return s + (isExcluded ? 0 : d.total);
+  }, 0);
+  entries.forEach(([name, d, color]) => {
+    const isExcluded = isSub ? excludedSubs.has(catName + '::' + name) : excludedCats.has(name);
+    const pct = includedTotal > 0 ? Math.round(d.total / includedTotal * 100) : 0;
+    const item = document.createElement('div');
+    item.className = 'leg-item' + (isExcluded ? ' muted' : '');
+    item.innerHTML = `
+      <input type="checkbox" class="leg-check" ${isExcluded ? '' : 'checked'}>
+      <div class="leg-dot" style="background:${color}"></div>
+      <span class="leg-name">${name}</span>
+      <span class="leg-val">${fmt(d.total)} <span style="font-size:10px;color:var(--text-3)">${isExcluded ? '—' : pct+'%'}</span></span>`;
+    const check = item.querySelector('.leg-check');
+    check.onclick = e => {
+      e.stopPropagation();
+      const key = isSub ? (catName + '::' + name) : name;
+      const set = isSub ? excludedSubs : excludedCats;
+      if (check.checked) set.delete(key); else set.add(key);
+      render();
+    };
+    item.onclick = () => {
+      if (!isSub) {
+        currentCat = name;
+        render();
+      } else {
+        renderList(d.items, name, color);
+      }
+    };
+    el.appendChild(item);
+  });
+}
+
+function updateChart(labels, data, colors, sorted) {
+  const canvas = document.getElementById('donut-canvas');
+  if (chart) { chart.destroy(); chart = null; }
+  chart = new Chart(canvas, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors,
+        borderWidth: 2,
+        borderColor: 'transparent',
+        hoverBorderColor: 'transparent',
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ' ' + fmtFull(ctx.raw)
+          }
+        }
+      },
+      onClick(evt, elements) {
+        if (!elements.length) return;
+        const idx = elements[0].index;
+        const name = sorted[idx][0];
+        if (!currentCat) {
+          currentCat = name;
+          render();
+        } else {
+          renderList(sorted[idx][1].items, name, colors[idx]);
+        }
+      }
+    }
+  });
+}
+
+function renderList(items, subtitle, color) {
+  const el = document.getElementById('tx-scroll');
+  const title = document.getElementById('list-title');
+  const count = document.getElementById('list-count');
+  let rows = [...items];
+  const sorters = {
+    'date-desc': (a,b) => b.d.localeCompare(a.d),
+    'date-asc':  (a,b) => a.d.localeCompare(b.d),
+    'amount-desc': (a,b) => b.a - a.a,
+    'amount-asc':  (a,b) => a.a - b.a,
+  };
+  rows.sort(sorters[sortMode] || sorters['date-desc']);
+  const q = searchText.trim().toLowerCase();
+  if (q) {
+    rows = rows.filter(t => {
+      const hay = [t.alias, t.m, t.c, t.cat, t.sub, t.d].filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+  }
+  title.textContent = subtitle || (currentCat ? currentCat : 'Todas las transacciones');
+  count.textContent = rows.length + ' transacciones';
+  el.innerHTML = '';
+  rows.forEach(t => {
+    const dot = color || COLORS[t.cat] || '#888';
+    const row = document.createElement('div');
+    const isExcluded = excludedIds.has(t.id) || excludedCats.has(t.cat) || excludedSubs.has(t.cat + '::' + t.sub);
+    row.className = 'tx-row' + (isExcluded ? ' muted' : '');
+    row.dataset.id = t.id;
+    const alias = t.alias || t.m || t.c || 'Sin descripción';
+    const sub = [t.d, t.c].filter(Boolean).join(' · ');
+    const sign = t.dir === 'in' ? '+' : '−';
+    const amountClass = 'tx-amount' + (t.dir === 'in' ? ' positive' : '');
+    const catExcluded = excludedCats.has(t.cat) || excludedSubs.has(t.cat + '::' + t.sub);
+    const manualBadge = t.alias_manual ? '<span class="alias-badge" title="Alias editado manualmente">✎</span>' : '';
+    row.innerHTML = `
+      <input type="checkbox" class="tx-check" ${excludedIds.has(t.id) || catExcluded ? '' : 'checked'} ${catExcluded ? 'disabled' : ''}>
+      <div class="tx-dot" style="background:${dot}"></div>
+      <div class="tx-info">
+        <div class="tx-merchant">${alias}${manualBadge}</div>
+        <div class="tx-date">${sub}</div>
+      </div>
+      <div>
+        <div class="${amountClass}">${sign}${fmtFull(t.a)}</div>
+        <div class="tx-sub">${t.sub}</div>
+      </div>`;
+    const check = row.querySelector('.tx-check');
+    check.onclick = e => {
+      e.stopPropagation();
+      if (check.checked) excludedIds.delete(t.id); else excludedIds.add(t.id);
+      render();
+    };
+    row.onclick = e => {
+      if (e.target === check) return;
+      openEditor(row, t);
+    };
+    el.appendChild(row);
+  });
+}
+
+function openEditor(row, t) {
+  if (row.classList.contains('editing')) return;
+  row.classList.add('editing');
+
+  if (t.raw && t.raw.length) {
+    const details = document.createElement('dl');
+    details.className = 'tx-details';
+    details.onclick = e => e.stopPropagation();
+    t.raw.forEach(kv => {
+      const dt = document.createElement('dt');
+      dt.textContent = kv.k;
+      const dd = document.createElement('dd');
+      dd.textContent = kv.v;
+      details.appendChild(dt);
+      details.appendChild(dd);
+    });
+    row.appendChild(details);
+  }
+
+  const aliasBar = document.createElement('div');
+  aliasBar.className = 'tx-edit-bar tx-alias-bar';
+  aliasBar.onclick = e => e.stopPropagation();
+  const aliasInput = document.createElement('input');
+  aliasInput.type = 'text';
+  aliasInput.placeholder = 'Alias';
+  aliasInput.value = t.alias || '';
+  aliasInput.className = 'alias-input';
+  const aliasLabel = document.createElement('span');
+  aliasLabel.className = 'alias-label';
+  aliasLabel.textContent = t.alias_manual ? 'Manual' : 'Auto';
+  aliasInput.addEventListener('input', () => { aliasLabel.textContent = 'Manual'; });
+  aliasBar.appendChild(aliasLabel);
+  aliasBar.appendChild(aliasInput);
+  if (t.alias_manual) {
+    const resetAliasBtn = document.createElement('button');
+    resetAliasBtn.className = 'save-btn';
+    resetAliasBtn.style.background = 'transparent';
+    resetAliasBtn.style.color = 'var(--text-2)';
+    resetAliasBtn.textContent = 'Restaurar auto';
+    resetAliasBtn.onclick = () => {
+      const idx = RAW.findIndex(x => x.id === t.id);
+      if (idx >= 0) {
+        RAW[idx].alias_manual = false;
+        // Recalcular alias con la lógica del cliente (simple fallback: usar merchant)
+        // La fuente de verdad es el servidor. Tras guardar y recargar tendrá el alias automático.
+        dirty = true;
+        updateSaveButton();
+        row.classList.remove('editing');
+        aliasBar.remove();
+        bar.remove();
+        const details = row.querySelector('.tx-details');
+        if (details) details.remove();
+        // Recarga el dataset para obtener el alias auto recalculado por el servidor.
+        loadDataset(currentDataset);
+      }
+    };
+    aliasBar.appendChild(resetAliasBtn);
+  }
+  row.appendChild(aliasBar);
+
+  const bar = document.createElement('div');
+  bar.className = 'tx-edit-bar';
+  bar.onclick = e => e.stopPropagation();
+
+  const catSel = document.createElement('select');
+  Object.keys(TAXONOMY).forEach(cat => {
+    const opt = document.createElement('option');
+    opt.value = cat; opt.textContent = cat;
+    if (cat === t.cat) opt.selected = true;
+    catSel.appendChild(opt);
+  });
+
+  const subSel = document.createElement('select');
+  function populateSubs(cat, selectedSub) {
+    subSel.innerHTML = '';
+    (TAXONOMY[cat] || []).forEach(sub => {
+      const opt = document.createElement('option');
+      opt.value = sub; opt.textContent = sub;
+      if (sub === selectedSub) opt.selected = true;
+      subSel.appendChild(opt);
+    });
+  }
+  populateSubs(t.cat, t.sub);
+  catSel.onchange = () => populateSubs(catSel.value, null);
+
+  const applyBtn = document.createElement('button');
+  applyBtn.className = 'save-btn';
+  applyBtn.textContent = 'Aplicar';
+  applyBtn.onclick = () => {
+    const idx = RAW.findIndex(x => x.id === t.id);
+    if (idx >= 0) {
+      RAW[idx].cat = catSel.value;
+      RAW[idx].sub = subSel.value;
+      const newAlias = aliasInput.value.trim();
+      if (newAlias && newAlias !== (t.alias || '')) {
+        RAW[idx].alias = newAlias;
+        RAW[idx].alias_manual = true;
+      } else if (!newAlias) {
+        // Si lo dejan vacío, lo tratamos como "volver a auto" (lo recalculará
+        // el servidor en la próxima ejecución de enrich_aliases.py).
+        RAW[idx].alias = '';
+        RAW[idx].alias_manual = false;
+      }
+      dirty = true;
+      updateSaveButton();
+      render();
+    }
+  };
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'save-btn';
+  cancelBtn.style.background = 'transparent';
+  cancelBtn.style.color = 'var(--color-text-secondary)';
+  cancelBtn.textContent = 'Cancelar';
+  cancelBtn.onclick = () => {
+    row.classList.remove('editing');
+    bar.remove();
+    aliasBar.remove();
+    const details = row.querySelector('.tx-details');
+    if (details) details.remove();
+    const sugg = row.querySelector('.tx-suggest');
+    if (sugg) sugg.remove();
+  };
+
+  bar.appendChild(catSel);
+  bar.appendChild(subSel);
+  bar.appendChild(applyBtn);
+  bar.appendChild(cancelBtn);
+  row.appendChild(bar);
+
+  const suggestion = findCategorySuggestion(t);
+  if (suggestion) {
+    const sugg = document.createElement('div');
+    sugg.className = 'tx-suggest';
+    sugg.onclick = e => e.stopPropagation();
+    const label = document.createElement('span');
+    label.className = 'tx-suggest-label';
+    label.textContent = 'Sugerencia:';
+    const link = document.createElement('a');
+    link.className = 'tx-suggest-link';
+    link.href = '#';
+    link.textContent = `${suggestion.cat} · ${suggestion.sub}`;
+    link.title = suggestion.source === 'similar'
+      ? `Basado en ${suggestion.count} transacción(es) similar(es)`
+      : 'Basado en palabras clave del nombre';
+    link.onclick = (e) => {
+      e.preventDefault();
+      catSel.value = suggestion.cat;
+      populateSubs(suggestion.cat, suggestion.sub);
+    };
+    sugg.appendChild(label);
+    sugg.appendChild(link);
+    row.appendChild(sugg);
+  }
+}
+
+function normalizeForMatch(s) {
+  if (!s) return '';
+  return s
+    .toLowerCase()
+    .replace(/\d{4,}/g, ' ')           // IDs numéricos largos (4+ dígitos)
+    .replace(/\*/g, ' ')                // asterisco de SQ *, UBR*, etc.
+    .replace(/[^a-z0-9áéíóúñü&\s]/gi, ' ')  // puntuación
+    .replace(/\b(s\s*a\s*u?|s\s*l\s*u?|llc|bv|espana|spain|bcn|barcelona|madrid|europe|online|www|com|es)\b/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Reglas genéricas por palabra clave cargadas desde suggestion_rules.json.
+// Se usan como fallback cuando no hay transacciones similares ya categorizadas.
+let KEYWORD_SUGGESTIONS = [];
+
+async function loadSuggestionRules() {
+  try {
+    const res = await fetch('suggestion_rules.json?_=' + Date.now(), {cache: 'no-store'});
+    if (!res.ok) return;
+    const data = await res.json();
+    KEYWORD_SUGGESTIONS = (data.rules || []).map(r => ({
+      patterns: (r.patterns || []).map(p => p.toLowerCase()),
+      cat: r.cat,
+      sub: r.sub,
+    }));
+  } catch (_) { /* silently ignore */ }
+}
+
+function findCategorySuggestion(t) {
+  // 1) Busca transacciones similares ya categorizadas (no Other/Other).
+  const primary = normalizeForMatch(t.alias || t.m || '');
+  const fallback = normalizeForMatch(t.m || '');
+  const tokens = new Set([primary, fallback].flatMap(s => s.split(' ')).filter(w => w.length >= 4));
+
+  if (tokens.size) {
+    const counts = new Map();
+    for (const o of RAW) {
+      if (o.id === t.id) continue;
+      if (o.cat === 'Other' && o.sub === 'Other') continue;
+      const oNorm = normalizeForMatch(o.alias || o.m || '');
+      if (!oNorm) continue;
+      const oTokens = new Set(oNorm.split(' ').filter(w => w.length >= 4));
+      let shared = 0;
+      for (const tk of tokens) if (oTokens.has(tk)) shared++;
+      if (!shared) continue;
+      const k = o.cat + '::' + o.sub;
+      counts.set(k, (counts.get(k) || 0) + shared);
+    }
+    if (counts.size) {
+      let best = null;
+      for (const [k, n] of counts) {
+        if (!best || n > best.n) best = { k, n };
+      }
+      const [cat, sub] = best.k.split('::');
+      if (cat !== t.cat || sub !== t.sub) {
+        return { cat, sub, count: best.n, source: 'similar' };
+      }
+    }
+  }
+
+  // 2) Fallback: palabras clave genéricas (suggestion_rules.json).
+  const hay = `${t.alias || ''} ${t.m || ''} ${t.c || ''}`.toLowerCase();
+  for (const rule of KEYWORD_SUGGESTIONS) {
+    for (const p of rule.patterns) {
+      if (hay.includes(p)) {
+        if (rule.cat === t.cat && rule.sub === t.sub) return null;
+        return { cat: rule.cat, sub: rule.sub, count: 0, source: 'keyword' };
+      }
+    }
+  }
+  return null;
+}
+
+let autoSaveSupported = true;
+
+function setStatus(text, kind) {
+  const el = document.getElementById('save-status');
+  el.textContent = text;
+  el.className = 'save-status' + (kind ? ' ' + kind : '');
+}
+
+function buildPayload() {
+  return { version: 1, account: ACCOUNT, taxonomy: TAXONOMY, transactions: RAW };
+}
+
+function downloadJSON() {
+  const blob = new Blob([JSON.stringify(buildPayload(), null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'transactions.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function autoSave() {
+  if (!currentDataset) return;
+  setStatus('Guardando…');
+  try {
+    const res = await fetch('/data/' + encodeURIComponent(currentDataset), {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(buildPayload()),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    dirty = false;
+    setStatus('Guardado ✓', 'ok');
+    setTimeout(() => setStatus('', null), 1500);
+  } catch (err) {
+    autoSaveSupported = false;
+    setStatus('Sin auto-save, descarga manual', 'err');
+    document.getElementById('download-transactions-btn').style.display = '';
+  }
+}
+
+function updateSaveButton() {
+  if (!autoSaveSupported) {
+    document.getElementById('download-transactions-btn').style.display = dirty ? '' : 'none';
+    return;
+  }
+  autoSave();
+}
+
+document.getElementById('download-transactions-btn').addEventListener('click', () => {
+  downloadJSON();
+  dirty = false;
+  document.getElementById('download-transactions-btn').style.display = 'none';
+});
+
+function goBack() {
+  currentCat = null;
+  render();
+}
+
+document.getElementById('date-from').addEventListener('change', () => { currentCat = null; render(); });
+document.getElementById('date-to').addEventListener('change', () => { currentCat = null; render(); });
+
+document.getElementById('tx-search-input').addEventListener('input', (e) => {
+  searchText = e.target.value;
+  render();
+});
+
+function updateSortUI() {
+  document.querySelectorAll('.sort-option').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.sort === sortMode);
+  });
+}
+updateSortUI();
+
+document.getElementById('sort-toggle').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const dd = document.getElementById('sort-dropdown');
+  const btn = document.getElementById('sort-toggle');
+  const open = dd.hasAttribute('hidden');
+  if (open) { dd.removeAttribute('hidden'); btn.setAttribute('aria-expanded','true'); }
+  else { dd.setAttribute('hidden',''); btn.setAttribute('aria-expanded','false'); }
+});
+
+document.querySelectorAll('.sort-option').forEach(btn => {
+  btn.addEventListener('click', () => {
+    sortMode = btn.dataset.sort;
+    updateSortUI();
+    document.getElementById('sort-dropdown').setAttribute('hidden','');
+    document.getElementById('sort-toggle').setAttribute('aria-expanded','false');
+    render();
+  });
+});
+
+document.addEventListener('click', (e) => {
+  const dd = document.getElementById('sort-dropdown');
+  const btn = document.getElementById('sort-toggle');
+  if (!dd || dd.hasAttribute('hidden')) return;
+  if (!dd.contains(e.target) && !btn.contains(e.target)) {
+    dd.setAttribute('hidden','');
+    btn.setAttribute('aria-expanded','false');
+  }
+});
+
+document.getElementById('reset-selection-btn').addEventListener('click', () => {
+  excludedIds.clear();
+  excludedCats.clear();
+  excludedSubs.clear();
+  searchText = '';
+  document.getElementById('tx-search-input').value = '';
+  render();
+});
+
+function fmtDatasetLabel(ds) {
+  const bank = ds.bank || '';
+  const isCard = ds.kind === 'credit_card';
+  const cardLabel = ds.card_type ? ds.card_type : 'Tarjeta';
+  if (isCard) {
+    const last4 = ds.last4 || ds.name.replace(/^cc-/, '').replace(/\.json$/, '');
+    const head = ds.alias ? ds.alias : (bank ? `${cardLabel} ${bank}` : cardLabel);
+    return `${head} · ··${last4}`;
+  }
+  if (ds.alias) {
+    return bank ? `${ds.alias} · ${bank}` : ds.alias;
+  }
+  const acctNum = ds.name.replace(/\.json$/, '');
+  const last4 = acctNum.slice(-4);
+  return bank ? `${bank} · ${last4}` : acctNum;
+}
+
+async function refreshDatasetList(preferredName) {
+  const sel = document.getElementById('dataset-select');
+  try {
+    const res = await fetch('/data/list?_=' + Date.now(), {cache: 'no-store'});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const { datasets } = await res.json();
+    sel.innerHTML = '';
+    if (!datasets.length) {
+      const opt = document.createElement('option');
+      opt.value = ''; opt.textContent = '— ningún dataset —';
+      sel.appendChild(opt);
+      return null;
+    }
+    datasets.forEach(ds => {
+      const opt = document.createElement('option');
+      opt.value = ds.name;
+      opt.textContent = fmtDatasetLabel(ds);
+      sel.appendChild(opt);
+    });
+    const chosen = preferredName && datasets.some(d => d.name === preferredName)
+      ? preferredName
+      : datasets[datasets.length - 1].name;
+    sel.value = chosen;
+    return chosen;
+  } catch (err) {
+    sel.innerHTML = '<option value="">Error al listar</option>';
+    throw err;
+  }
+}
+
+async function loadDataset(name) {
+  currentDataset = name;
+  currentCat = null;
+  excludedIds.clear(); excludedCats.clear(); excludedSubs.clear();
+  searchText = '';
+  const searchEl = document.getElementById('tx-search-input');
+  if (searchEl) searchEl.value = '';
+  try {
+    const res = await fetch('/data/' + encodeURIComponent(name) + '?_=' + Date.now(), {cache: 'no-store'});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    RAW = data.transactions;
+    TAXONOMY = data.taxonomy;
+    ACCOUNT = Object.assign({iban:'', bank:'', alias:'', kind:'account', last4:'', card_type:'', holder:''}, data.account || {});
+    const drawer = document.getElementById('account-panel');
+    drawer.setAttribute('data-kind', ACCOUNT.kind || 'account');
+    const tag = document.getElementById('acct-kind-tag');
+    tag.textContent = ACCOUNT.kind === 'credit_card' ? 'Tarjeta de crédito' : 'Cuenta corriente';
+    document.getElementById('acct-alias').value = ACCOUNT.alias;
+    document.getElementById('acct-bank').value = ACCOUNT.bank;
+    document.getElementById('acct-iban').value = ACCOUNT.iban || '';
+    document.getElementById('acct-card-type').value = ACCOUNT.card_type || '';
+    document.getElementById('acct-last4').value = ACCOUNT.last4 || '';
+    document.getElementById('acct-holder').value = ACCOUNT.holder || '';
+    // Ajustar rango de fechas de los filtros al dataset.
+    if (RAW.length) {
+      const dates = RAW.map(t => t.d).sort();
+      document.getElementById('date-from').value = dates[0];
+      document.getElementById('date-to').value = dates[dates.length - 1];
+    }
+    render();
+  } catch (err) {
+    showLoadError(err);
+  }
+}
+
+async function bootstrap() {
+  try {
+    await loadSuggestionRules();
+    const chosen = await refreshDatasetList();
+    if (chosen) {
+      await loadDataset(chosen);
+    } else {
+      document.querySelector('.wrap').insertAdjacentHTML('afterbegin',
+        '<div style="padding:16px;border:1px solid var(--border);border-radius:var(--radius-md);margin-bottom:16px;background:var(--panel)">' +
+        'No hay datasets en <code>data/</code>. Usa <b>+ Cargar XLS</b> para añadir el primero.' +
+        '</div>');
+    }
+  } catch (err) {
+    showLoadError(err);
+  }
+}
+
+document.getElementById('dataset-select').addEventListener('change', (e) => {
+  if (e.target.value) loadDataset(e.target.value);
+});
+
+document.getElementById('upload-btn').addEventListener('click', () => {
+  document.getElementById('upload-input').click();
+});
+
+function openAccountDrawer(open) {
+  const panel = document.getElementById('account-panel');
+  const backdrop = document.getElementById('account-backdrop');
+  const btn = document.getElementById('account-toggle');
+  if (open) {
+    backdrop.removeAttribute('hidden');
+    requestAnimationFrame(() => {
+      backdrop.classList.add('open');
+      panel.classList.add('open');
+    });
+    panel.setAttribute('aria-hidden', 'false');
+    btn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  } else {
+    panel.classList.remove('open');
+    backdrop.classList.remove('open');
+    panel.setAttribute('aria-hidden', 'true');
+    btn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    setTimeout(() => backdrop.setAttribute('hidden', ''), 250);
+  }
+}
+
+document.getElementById('account-toggle').addEventListener('click', () => {
+  const panel = document.getElementById('account-panel');
+  openAccountDrawer(!panel.classList.contains('open'));
+});
+document.getElementById('account-close').addEventListener('click', () => openAccountDrawer(false));
+document.getElementById('account-backdrop').addEventListener('click', () => openAccountDrawer(false));
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const panel = document.getElementById('account-panel');
+    if (panel && panel.classList.contains('open')) openAccountDrawer(false);
+  }
+});
+
+// Autosave al editar cualquier campo de cuenta
+let accountSaveTimer = null;
+function onAccountInput(field) {
+  return (e) => {
+    ACCOUNT[field] = e.target.value;
+    dirty = true;
+    clearTimeout(accountSaveTimer);
+    // Debounce: guarda 400ms después del último cambio
+    accountSaveTimer = setTimeout(async () => {
+      await autoSave();
+      // Re-lee /data/list para que el dropdown refleje los cambios
+      if (field === 'alias' || field === 'bank' || field === 'card_type') {
+        await refreshDatasetList(currentDataset);
+      }
+    }, 400);
+  };
+}
+document.getElementById('acct-alias').addEventListener('input', onAccountInput('alias'));
+document.getElementById('acct-bank').addEventListener('input', onAccountInput('bank'));
+document.getElementById('acct-iban').addEventListener('input', onAccountInput('iban'));
+document.getElementById('acct-card-type').addEventListener('input', onAccountInput('card_type'));
+document.getElementById('acct-holder').addEventListener('input', onAccountInput('holder'));
+
+async function uploadXls(file, last4) {
+  const fd = new FormData();
+  fd.append('file', file);
+  if (last4) fd.append('last4', last4);
+  const res = await fetch('/data/upload', { method: 'POST', body: fd });
+  if (res.ok) return { ok: true, payload: await res.json() };
+  const text = await res.text();
+  return { ok: false, status: res.status, text };
+}
+
+document.getElementById('upload-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  setStatus('Procesando XLS…');
+  try {
+    let result = await uploadXls(file);
+    // Si el servidor pide los últimos 4 dígitos, preguntamos y reintentamos.
+    if (!result.ok && result.status === 400 && /last4|tarjeta/i.test(result.text)) {
+      const last4 = prompt('Parece un extracto de tarjeta de crédito.\nIntroduce los últimos 4 dígitos de la tarjeta:');
+      if (!last4 || !/^\d{4}$/.test(last4.trim())) {
+        setStatus('Cancelado', 'err');
+        return;
+      }
+      setStatus('Procesando XLS…');
+      result = await uploadXls(file, last4.trim());
+    }
+    if (!result.ok) throw new Error('HTTP ' + result.status + ': ' + result.text);
+    setStatus('Dataset creado ✓', 'ok');
+    setTimeout(() => setStatus('', null), 1500);
+    const chosen = await refreshDatasetList(result.payload.name);
+    if (chosen) await loadDataset(chosen);
+  } catch (err) {
+    setStatus('Error al subir', 'err');
+    alert('No se pudo procesar el archivo: ' + err.message);
+  } finally {
+    e.target.value = '';
+  }
+});
+
+function showLoadError(err) {
+  document.querySelector('.wrap').innerHTML =
+    '<div style="padding:24px;border:1px solid var(--border);border-radius:var(--radius-lg);max-width:640px;margin:24px auto;background:var(--panel)">' +
+    '<h3 style="font-size:14px;font-weight:500;margin-bottom:8px">No se pudo cargar el dataset</h3>' +
+    '<p style="font-size:12px;color:var(--text-2);margin-bottom:12px">Error: ' + err.message + '</p>' +
+    '<p style="font-size:12px;color:var(--text-2);margin-bottom:8px">Necesitas el servidor local corriendo:</p>' +
+    '<pre style="font-size:11px;background:var(--bg);padding:8px;border-radius:var(--radius-sm);margin-bottom:8px">python3 serve.py</pre>' +
+    '<p style="font-size:12px;color:var(--text-2)">Y abre <code>http://localhost:8000/transaction_dashboard.html</code>.</p>' +
+    '</div>';
+}
+
+bootstrap();
+</script>

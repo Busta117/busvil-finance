@@ -1,0 +1,597 @@
+{
+  "_meta": {
+    "generated_from": [
+      "data/0200680387_2025-09-25_2026-05-04.json"
+    ],
+    "total_transactions_scanned": 265,
+    "rules_emitted": 137
+  },
+  "merchants": {
+    "04000003TCF TARJETA VISA": [
+      "Shopping",
+      "Electronics & Tech"
+    ],
+    "04000093DIS AMORTIZACIÓN TARJ.": [
+      "Transfers",
+      "Internal Transfer"
+    ],
+    "06700051CTF TRASPASO PROPIO": [
+      "Transfers",
+      "Internal Transfer"
+    ],
+    "07300022PAG PAGO TRANSFERENCIAS": [
+      "Leisure",
+      "Travel & Hotels"
+    ],
+    "476 - CF AVE SANT": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "A.P.S. CENTRO GIO": [
+      "Leisure",
+      "Activities"
+    ],
+    "ABONO CAMPAÑA CAIXA": [
+      "Income",
+      "Other Income"
+    ],
+    "AIRBNB * HMEF259Q": [
+      "Leisure",
+      "Travel & Hotels"
+    ],
+    "ALCAMPO": [
+      "Food & Drink",
+      "Supermarket"
+    ],
+    "ALDI GRAN VIA P G": [
+      "Food & Drink",
+      "Supermarket"
+    ],
+    "ALMIRI DEPORTES SL-2080B4C9A787 SANTIAGO BUSTAMANTE GARCIA": [
+      "Health & Wellness",
+      "Gym & Fitness"
+    ],
+    "ALMIRI DEPORTES SL-421FEA8AFF62 SANTIAGO BUSTAMANTE GARCIA": [
+      "Health & Wellness",
+      "Gym & Fitness"
+    ],
+    "ALMIRI DEPORTES SL-625455BE0586 SANTIAGO BUSTAMANTE GARCIA": [
+      "Health & Wellness",
+      "Gym & Fitness"
+    ],
+    "ALMIRI DEPORTES SL-635B8C1806E5 SANTIAGO BUSTAMANTE GARCIA": [
+      "Health & Wellness",
+      "Gym & Fitness"
+    ],
+    "ALMIRI DEPORTES SL-7F2FCFD84756 SANTIAGO BUSTAMANTE GARCIA": [
+      "Health & Wellness",
+      "Gym & Fitness"
+    ],
+    "ALTEA COMUNIDAD S": [
+      "Leisure",
+      "Travel & Hotels"
+    ],
+    "AMETLLER ORIGEN": [
+      "Food & Drink",
+      "Supermarket"
+    ],
+    "AMOVENS": [
+      "Transport",
+      "Taxi & Rideshare"
+    ],
+    "ANDORRA TELECOM (": [
+      "Leisure",
+      "Travel & Hotels"
+    ],
+    "ANICURA GLORIES": [
+      "Health & Wellness",
+      "Vet"
+    ],
+    "APARCAMENT DEL FU": [
+      "Transport",
+      "Tolls & Parking"
+    ],
+    "APARTAMENTS ELS A": [
+      "Leisure",
+      "Travel & Hotels"
+    ],
+    "ASICS BARCELONA": [
+      "Shopping",
+      "Sports"
+    ],
+    "AUTOPISTAS TERRAS": [
+      "Transport",
+      "Tolls & Parking"
+    ],
+    "BARKS N BITES": [
+      "Income",
+      "Other Income"
+    ],
+    "BORRELLVET S.L.": [
+      "Health & Wellness",
+      "Vet"
+    ],
+    "BREW COFFEE URQUI": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "BUGANVILLASOMNIS": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "BUSVIL LLC": [
+      "Leisure",
+      "Travel & Hotels"
+    ],
+    "CAPRABO 2521": [
+      "Food & Drink",
+      "Supermarket"
+    ],
+    "CARNIVAL": [
+      "Leisure",
+      "Activities"
+    ],
+    "CCO COMX": [
+      "Shopping",
+      "Electronics & Tech"
+    ],
+    "COLIBRI": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "CURAPROX ESPANA": [
+      "Shopping",
+      "Beauty & Personal Care"
+    ],
+    "DAVID TAYLOR": [
+      "Income",
+      "Other Income"
+    ],
+    "DECATHLON ILLA PR": [
+      "Shopping",
+      "Sports"
+    ],
+    "DECATHLON RAMBLAS": [
+      "Shopping",
+      "Sports"
+    ],
+    "DIA 31018": [
+      "Food & Drink",
+      "Supermarket"
+    ],
+    "DORIGEN BCN": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "DS COMPLEMENTOS": [
+      "Shopping",
+      "Fashion & Clothing"
+    ],
+    "E.S. AVDA. SARRIA": [
+      "Transport",
+      "Fuel"
+    ],
+    "ES.SODEXO.COM": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "EUROPCAR SPAIN": [
+      "Transport",
+      "Car Rental"
+    ],
+    "EVINOVA SPAIN SL B198932210": [
+      "Income",
+      "Salary"
+    ],
+    "FALCANS": [
+      "Transport",
+      "Trains & Flights"
+    ],
+    "FARMACIA CASAS": [
+      "Health & Wellness",
+      "Pharmacy"
+    ],
+    "FARMACIA GALENO I": [
+      "Health & Wellness",
+      "Pharmacy"
+    ],
+    "FARMACIA LLURIA": [
+      "Health & Wellness",
+      "Pharmacy"
+    ],
+    "FARMACIA O. NEBOT": [
+      "Health & Wellness",
+      "Pharmacy"
+    ],
+    "FARMACIA RONDA": [
+      "Health & Wellness",
+      "Pharmacy"
+    ],
+    "FARMACIA SALVADO": [
+      "Health & Wellness",
+      "Pharmacy"
+    ],
+    "FORN MISTRAL": [
+      "Food & Drink",
+      "Bakery"
+    ],
+    "FREENOW* D3VG50-2": [
+      "Transport",
+      "Taxi & Rideshare"
+    ],
+    "FREENOW*MM-CFZP9": [
+      "Transport",
+      "Taxi & Rideshare"
+    ],
+    "GLOVO 14DEC BJBBX": [
+      "Food & Drink",
+      "Delivery"
+    ],
+    "GLOVO 16DEC B7Q9R": [
+      "Food & Drink",
+      "Delivery"
+    ],
+    "GLOVO 29MAR BAGPM": [
+      "Food & Drink",
+      "Delivery"
+    ],
+    "GOOD TEA": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "GRANDVALIRA-FUNIC": [
+      "Leisure",
+      "Activities"
+    ],
+    "GYMPASS": [
+      "Health & Wellness",
+      "Gym & Fitness"
+    ],
+    "HM ES0120": [
+      "Shopping",
+      "Fashion & Clothing"
+    ],
+    "HONEST GREENS": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "HOTEL AT BOOKING.": [
+      "Leisure",
+      "Travel & Hotels"
+    ],
+    "IBKR": [
+      "Investments",
+      "Brokerage"
+    ],
+    "INTERACTIVE BROKERS LLC": [
+      "Investments",
+      "Brokerage"
+    ],
+    "KASUALK PIZZA": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "KINA CHOCOLATES": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "LEROY MERLIN ES": [
+      "Shopping",
+      "Home & Garden"
+    ],
+    "MARKETPLACE PCCOM": [
+      "Shopping",
+      "Electronics & Tech"
+    ],
+    "MERCADONA BARNA C": [
+      "Food & Drink",
+      "Supermarket"
+    ],
+    "MERCILONA CALL 10": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "MICHAEL LOMANOV": [
+      "Health & Wellness",
+      "Medical"
+    ],
+    "MISCOTA BARCELONA": [
+      "Shopping",
+      "Pets"
+    ],
+    "MISTER BRAZ": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "NATHALY LARA": [
+      "Leisure",
+      "Tickets & Events"
+    ],
+    "NYX*JOSMARVENDING": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "OLYMPIA ESPORTS M": [
+      "Shopping",
+      "Sports"
+    ],
+    "ONE MORE": [
+      "Leisure",
+      "Activities"
+    ],
+    "OUIGO ESPANA": [
+      "Transport",
+      "Trains & Flights"
+    ],
+    "PASTISSERIA MODER": [
+      "Food & Drink",
+      "Bakery"
+    ],
+    "PAULA ANDREA;ARANGO ECHEVERRY;": [
+      "Income",
+      "Other Income"
+    ],
+    "PERFUMS BEAUTY": [
+      "Shopping",
+      "Beauty & Personal Care"
+    ],
+    "PETIT PASTIS": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "PLENERGY US 455P": [
+      "Transport",
+      "Fuel"
+    ],
+    "PRIFER CAKE SL": [
+      "Food & Drink",
+      "Bakery"
+    ],
+    "PROAP APARTAMENTS": [
+      "Leisure",
+      "Travel & Hotels"
+    ],
+    "RAFI SUPERMARKET": [
+      "Food & Drink",
+      "Supermarket"
+    ],
+    "RENFE VIRTUAL INT": [
+      "Transport",
+      "Trains & Flights"
+    ],
+    "RESTAURANT SOLANE": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "SANDALS & CO": [
+      "Shopping",
+      "Fashion & Clothing"
+    ],
+    "SANDWICHEZ BRUC": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "SANDWICHEZ CASP": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "SANTIAGO BUSTAMANTE GARCIA": [
+      "Income",
+      "Other Income"
+    ],
+    "SERGI;VILLAUBI;SERRA": [
+      "Income",
+      "Other Income"
+    ],
+    "SJOERD;MARTENS": [
+      "Health & Wellness",
+      "Vet"
+    ],
+    "SLEEP 8": [
+      "Shopping",
+      "Beauty & Personal Care"
+    ],
+    "SLOPPY TUNAS": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "SORLI ROGER FLOR": [
+      "Food & Drink",
+      "Supermarket"
+    ],
+    "SP FINCUT ESPAGNE": [
+      "Shopping",
+      "Fashion & Clothing"
+    ],
+    "SP PICSIL SPORT": [
+      "Shopping",
+      "Sports"
+    ],
+    "SP PRIMAL PUMP": [
+      "Health & Wellness",
+      "Gym & Fitness"
+    ],
+    "SP TROPICFEEL": [
+      "Shopping",
+      "Sports"
+    ],
+    "SPHERE BCN SL": [
+      "Shopping",
+      "Fashion & Clothing"
+    ],
+    "SQ *CACHAPAS AND": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "SQ *COFFEE BAR": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "SQ *HIDDEN CAFE B": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "SQ *ORIGO BAKERY": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "SQ *PEMSA LEISURE": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "SQ *SAGA COFFEE S": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "STARBUCKS COFFEE": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "SUCRE CREMAT": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "SUPERMECADO": [
+      "Food & Drink",
+      "Supermarket"
+    ],
+    "T.G.S.S. POR CUENTA SPEE PREST. DESEMPLEO": [
+      "Income",
+      "Other Income"
+    ],
+    "TASMANGO DESSERT": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "TAVERNA DEL VOLAP": [
+      "Food & Drink",
+      "Cafes & Restaurants"
+    ],
+    "TELPARK": [
+      "Transport",
+      "Tolls & Parking"
+    ],
+    "THE HALL": [
+      "Leisure",
+      "Activities"
+    ],
+    "THE LOAF": [
+      "Food & Drink",
+      "Bakery"
+    ],
+    "THE MAN CAVE": [
+      "Shopping",
+      "Beauty & Personal Care"
+    ],
+    "THE PROFESSIONAL": [
+      "Shopping",
+      "Beauty & Personal Care"
+    ],
+    "TM *TICKETMASTER": [
+      "Leisure",
+      "Tickets & Events"
+    ],
+    "TMB APP": [
+      "Transport",
+      "Public Transport"
+    ],
+    "TMB BUS TRANSIT": [
+      "Transport",
+      "Public Transport"
+    ],
+    "TUNELSPAN B.VALLV": [
+      "Transport",
+      "Tolls & Parking"
+    ],
+    "TUNELSPAN BARRERA": [
+      "Transport",
+      "Tolls & Parking"
+    ],
+    "UBER *LIME HELP.U": [
+      "Transport",
+      "Taxi & Rideshare"
+    ],
+    "UNIQLO PASEO DE G": [
+      "Shopping",
+      "Fashion & Clothing"
+    ],
+    "UNIQLO TERMINI": [
+      "Shopping",
+      "Fashion & Clothing"
+    ],
+    "VENDING ZARAGOZA": [
+      "Shopping",
+      "Fashion & Clothing"
+    ],
+    "VERITAS EDIF ESTE": [
+      "Food & Drink",
+      "Supermarket"
+    ],
+    "VETSTIL CASP 9341": [
+      "Health & Wellness",
+      "Vet"
+    ],
+    "VUELING AIRLINES": [
+      "Transport",
+      "Trains & Flights"
+    ],
+    "WELLHUB MARIA JOS": [
+      "Health & Wellness",
+      "Gym & Fitness"
+    ],
+    "WELLHUB SANTIAGO": [
+      "Health & Wellness",
+      "Gym & Fitness"
+    ],
+    "WWW.AMAZON": [
+      "Shopping",
+      "Electronics & Tech"
+    ],
+    "WWW.AMAZON.ES": [
+      "Shopping",
+      "Electronics & Tech"
+    ]
+  },
+  "patterns": [
+    [
+      [
+        "YEGO"
+      ],
+      "Transport",
+      "Taxi & Rideshare"
+    ],
+    [
+      [
+        "ACCIONA MOTOSHARING",
+        "ACCIONA"
+      ],
+      "Transport",
+      "Taxi & Rideshare"
+    ],
+    [
+      [
+        "UBR*",
+        "UBER.COM",
+        "UBER RIDES",
+        "UBER TRIP",
+        "UBER BV"
+      ],
+      "Transport",
+      "Taxi & Rideshare"
+    ],
+    [
+      [
+        "CONDIS"
+      ],
+      "Food & Drink",
+      "Supermarket"
+    ],
+    [
+      [
+        "IKEA"
+      ],
+      "Shopping",
+      "Home & Garden"
+    ]
+  ]
+}

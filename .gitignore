@@ -1,0 +1,26 @@
+# Datos reales (no se suben)
+local/data/
+local/samples/
+*.xls
+*.XLS
+*.xlsx
+
+# Backups automáticos
+*.bak
+*.json.bak
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Firebase
+web/.firebase/
+web/public/assets/config.local.js
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp

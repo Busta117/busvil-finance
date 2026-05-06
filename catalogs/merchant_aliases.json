@@ -1,0 +1,846 @@
+{
+  "_comment": "Reglas de alias para transacciones. Evaluadas en orden (primera que matchea gana). Los patrones se buscan como substring case-insensitive en el texto concatenado de merchant, titular, contraparte, concepto_comun, concepto_propio, descripcion/nota, y campos info-extra.",
+  "rules": [
+    {
+      "patterns": [
+        "OCTOPUS ENERGY",
+        "COREGC RE OCTOPUS"
+      ],
+      "alias": "Octopus Energy"
+    },
+    {
+      "patterns": [
+        "GRUPO MASMOVIL",
+        "MASMOVIL XFERA",
+        "XFERA MOVILES"
+      ],
+      "alias": "MásMóvil"
+    },
+    {
+      "patterns": [
+        "AIGUES DE BARCELONA",
+        "COREAIGUES"
+      ],
+      "alias": "Aigües de Barcelona"
+    },
+    {
+      "patterns": [
+        "HOSP.DE LA STA.CREU",
+        "HOSP. DE LA STA.CREU",
+        "FUNDACIO HOSPITAL DE LA SANTA CREU",
+        "SANTA CREU I S.PAU"
+      ],
+      "alias": "Fundació Hospital Santa Creu"
+    },
+    {
+      "patterns": [
+        "EVINOVA SPAIN"
+      ],
+      "alias": "Evinova"
+    },
+    {
+      "patterns": [
+        "BUSVIL LLC",
+        "BUSVIL"
+      ],
+      "alias": "Busvil LLC"
+    },
+    {
+      "patterns": [
+        "INTERACTIVE BROKERS",
+        "IBKR"
+      ],
+      "alias": "Interactive Brokers"
+    },
+    {
+      "patterns": [
+        "T.G.S.S.",
+        "TGSS"
+      ],
+      "alias": "Seguridad Social (TGSS)"
+    },
+    {
+      "patterns": [
+        "GOCARDLESS"
+      ],
+      "alias": "GoCardless"
+    },
+    {
+      "patterns": [
+        "ABONO CAMPAÑA CAIXA"
+      ],
+      "alias": "Abono CaixaBank"
+    },
+    {
+      "patterns": [
+        "VUELING AIRLINES",
+        "VUELING UP! VISA",
+        "VUELING"
+      ],
+      "alias": "Vueling"
+    },
+    {
+      "patterns": [
+        "RENFE VIRTUAL",
+        "RENFE"
+      ],
+      "alias": "Renfe"
+    },
+    {
+      "patterns": [
+        "OUIGO ESPANA",
+        "OUIGO"
+      ],
+      "alias": "Ouigo"
+    },
+    {
+      "patterns": [
+        "AIRBNB"
+      ],
+      "alias": "Airbnb"
+    },
+    {
+      "patterns": [
+        "BOOKING."
+      ],
+      "alias": "Booking.com"
+    },
+    {
+      "patterns": [
+        "MERCADONA"
+      ],
+      "alias": "Mercadona"
+    },
+    {
+      "patterns": [
+        "ALCAMPO"
+      ],
+      "alias": "Alcampo"
+    },
+    {
+      "patterns": [
+        "VERITAS EDIF"
+      ],
+      "alias": "Veritas"
+    },
+    {
+      "patterns": [
+        "ALDI GRAN VIA"
+      ],
+      "alias": "ALDI"
+    },
+    {
+      "patterns": [
+        "AMETLLER ORIGEN"
+      ],
+      "alias": "Ametller Origen"
+    },
+    {
+      "patterns": [
+        "CAPRABO"
+      ],
+      "alias": "Caprabo"
+    },
+    {
+      "patterns": [
+        "DIA 31018",
+        "DIA %"
+      ],
+      "alias": "Día"
+    },
+    {
+      "patterns": [
+        "SORLI ROGER FLOR",
+        "SORLI"
+      ],
+      "alias": "Sorli"
+    },
+    {
+      "patterns": [
+        "CONDIS"
+      ],
+      "alias": "Condis"
+    },
+    {
+      "patterns": [
+        "SANDWICHEZ"
+      ],
+      "alias": "Sandwichez"
+    },
+    {
+      "patterns": [
+        "STARBUCKS"
+      ],
+      "alias": "Starbucks"
+    },
+    {
+      "patterns": [
+        "BREW COFFEE"
+      ],
+      "alias": "Brew Coffee"
+    },
+    {
+      "patterns": [
+        "SAGA COFFEE"
+      ],
+      "alias": "Saga Coffee"
+    },
+    {
+      "patterns": [
+        "COFFEE BAR"
+      ],
+      "alias": "Coffee Bar"
+    },
+    {
+      "patterns": [
+        "ORIGO BAKERY"
+      ],
+      "alias": "Origo Bakery"
+    },
+    {
+      "patterns": [
+        "HIDDEN CAFE"
+      ],
+      "alias": "Hidden Cafe"
+    },
+    {
+      "patterns": [
+        "HONEST GREENS"
+      ],
+      "alias": "Honest Greens"
+    },
+    {
+      "patterns": [
+        "MISTER BRAZ"
+      ],
+      "alias": "Mister Braz"
+    },
+    {
+      "patterns": [
+        "TAVERNA DEL VOLAP"
+      ],
+      "alias": "Taverna del Volapié"
+    },
+    {
+      "patterns": [
+        "TASMANGO"
+      ],
+      "alias": "Tasmango"
+    },
+    {
+      "patterns": [
+        "PEMSA LEISURE"
+      ],
+      "alias": "Pemsa"
+    },
+    {
+      "patterns": [
+        "CACHAPAS"
+      ],
+      "alias": "Cachapas"
+    },
+    {
+      "patterns": [
+        "KASUALK PIZZA",
+        "KASUALK"
+      ],
+      "alias": "Kasualk"
+    },
+    {
+      "patterns": [
+        "KINA CHOCOLATES"
+      ],
+      "alias": "Kina Chocolates"
+    },
+    {
+      "patterns": [
+        "SUCRE CREMAT"
+      ],
+      "alias": "Sucre Cremat"
+    },
+    {
+      "patterns": [
+        "SLOPPY TUNAS"
+      ],
+      "alias": "Sloppy Tunas"
+    },
+    {
+      "patterns": [
+        "COLIBRI"
+      ],
+      "alias": "Colibrí"
+    },
+    {
+      "patterns": [
+        "GOOD TEA"
+      ],
+      "alias": "Good Tea"
+    },
+    {
+      "patterns": [
+        "BUGANVILLA"
+      ],
+      "alias": "Buganvilla"
+    },
+    {
+      "patterns": [
+        "RESTAURANT SOLANE"
+      ],
+      "alias": "Restaurant Solané"
+    },
+    {
+      "patterns": [
+        "PETIT PASTIS"
+      ],
+      "alias": "Petit Pastís"
+    },
+    {
+      "patterns": [
+        "DORIGEN BCN"
+      ],
+      "alias": "Dorigen"
+    },
+    {
+      "patterns": [
+        "FORN MISTRAL"
+      ],
+      "alias": "Forn Mistral"
+    },
+    {
+      "patterns": [
+        "PASTISSERIA MODER"
+      ],
+      "alias": "Pastissería Moderna"
+    },
+    {
+      "patterns": [
+        "PRIFER CAKE"
+      ],
+      "alias": "Prifer Cake"
+    },
+    {
+      "patterns": [
+        "THE LOAF"
+      ],
+      "alias": "The Loaf"
+    },
+    {
+      "patterns": [
+        "RAFI SUPERMARKET"
+      ],
+      "alias": "Rafi Supermarket"
+    },
+    {
+      "patterns": [
+        "GLOVO"
+      ],
+      "alias": "Glovo"
+    },
+    {
+      "patterns": [
+        "FREENOW"
+      ],
+      "alias": "Free Now"
+    },
+    {
+      "patterns": [
+        "UBER *LIME",
+        "UBER LIME"
+      ],
+      "alias": "Lime"
+    },
+    {
+      "patterns": [
+        "UBR*",
+        "UBER.COM",
+        "UBER RIDES",
+        "UBER TRIP",
+        "UBER BV"
+      ],
+      "alias": "Uber"
+    },
+    {
+      "patterns": [
+        "TMB APP",
+        "TMB BUS"
+      ],
+      "alias": "TMB"
+    },
+    {
+      "patterns": [
+        "TELPARK"
+      ],
+      "alias": "Telpark"
+    },
+    {
+      "patterns": [
+        "AUTOPISTAS TERRAS"
+      ],
+      "alias": "Autopistas Terrassa"
+    },
+    {
+      "patterns": [
+        "TUNELSPAN"
+      ],
+      "alias": "Túnel del Cadí"
+    },
+    {
+      "patterns": [
+        "APARCAMENT DEL FU"
+      ],
+      "alias": "Aparcament Funicular"
+    },
+    {
+      "patterns": [
+        "FALCANS"
+      ],
+      "alias": "Falcans"
+    },
+    {
+      "patterns": [
+        "E.S. AVDA. SARRIA",
+        "E.S. AVDA"
+      ],
+      "alias": "Gasolinera Sarrià"
+    },
+    {
+      "patterns": [
+        "PLENERGY"
+      ],
+      "alias": "Plenergy"
+    },
+    {
+      "patterns": [
+        "EUROPCAR"
+      ],
+      "alias": "Europcar"
+    },
+    {
+      "patterns": [
+        "AMOVENS"
+      ],
+      "alias": "Amovens"
+    },
+    {
+      "patterns": [
+        "UNIQLO"
+      ],
+      "alias": "Uniqlo"
+    },
+    {
+      "patterns": [
+        "HM ES",
+        "H&M"
+      ],
+      "alias": "H&M"
+    },
+    {
+      "patterns": [
+        "DECATHLON"
+      ],
+      "alias": "Decathlon"
+    },
+    {
+      "patterns": [
+        "LEROY MERLIN"
+      ],
+      "alias": "Leroy Merlin"
+    },
+    {
+      "patterns": [
+        "IKEA"
+      ],
+      "alias": "Ikea"
+    },
+    {
+      "patterns": [
+        "SANDALS & CO",
+        "SANDALS &CO"
+      ],
+      "alias": "Sandals & Co"
+    },
+    {
+      "patterns": [
+        "SPHERE BCN"
+      ],
+      "alias": "Sphere BCN"
+    },
+    {
+      "patterns": [
+        "ASICS"
+      ],
+      "alias": "ASICS"
+    },
+    {
+      "patterns": [
+        "COREALMIRI",
+        "ALMIRI DEPORTES"
+      ],
+      "alias": "Almiri Deportes"
+    },
+    {
+      "patterns": [
+        "OLYMPIA ESPORTS"
+      ],
+      "alias": "Olympia Esports"
+    },
+    {
+      "patterns": [
+        "PICSIL SPORT",
+        "SP PICSIL"
+      ],
+      "alias": "Picsil Sport"
+    },
+    {
+      "patterns": [
+        "TROPICFEEL",
+        "SP TROPICFEEL"
+      ],
+      "alias": "Tropicfeel"
+    },
+    {
+      "patterns": [
+        "FINCUT",
+        "SP FINCUT"
+      ],
+      "alias": "Fincut"
+    },
+    {
+      "patterns": [
+        "DS COMPLEMENTOS"
+      ],
+      "alias": "DS Complementos"
+    },
+    {
+      "patterns": [
+        "VENDING ZARAGOZA"
+      ],
+      "alias": "Vending Zaragoza"
+    },
+    {
+      "patterns": [
+        "WWW.AMAZON"
+      ],
+      "alias": "Amazon"
+    },
+    {
+      "patterns": [
+        "MARKETPLACE PCCOM",
+        "PCCOM"
+      ],
+      "alias": "PCComponentes"
+    },
+    {
+      "patterns": [
+        "CCO COMX",
+        "COMX"
+      ],
+      "alias": "Coinmate"
+    },
+    {
+      "patterns": [
+        "FARMACIA LLURIA"
+      ],
+      "alias": "Farmàcia Llúria"
+    },
+    {
+      "patterns": [
+        "FARMACIA RONDA"
+      ],
+      "alias": "Farmàcia Ronda"
+    },
+    {
+      "patterns": [
+        "FARMACIA CASAS"
+      ],
+      "alias": "Farmàcia Casas"
+    },
+    {
+      "patterns": [
+        "FARMACIA SALVADO"
+      ],
+      "alias": "Farmàcia Salvadó"
+    },
+    {
+      "patterns": [
+        "FARMACIA O. NEBOT"
+      ],
+      "alias": "Farmàcia O. Nebot"
+    },
+    {
+      "patterns": [
+        "FARMACIA GALENO"
+      ],
+      "alias": "Farmàcia Galeno"
+    },
+    {
+      "patterns": [
+        "FARMACIA"
+      ],
+      "alias": "Farmàcia"
+    },
+    {
+      "patterns": [
+        "CURAPROX"
+      ],
+      "alias": "Curaprox"
+    },
+    {
+      "patterns": [
+        "PERFUMS BEAUTY"
+      ],
+      "alias": "Perfums Beauty"
+    },
+    {
+      "patterns": [
+        "THE MAN CAVE"
+      ],
+      "alias": "The Man Cave"
+    },
+    {
+      "patterns": [
+        "THE PROFESSIONAL"
+      ],
+      "alias": "The Professional"
+    },
+    {
+      "patterns": [
+        "SLEEP 8"
+      ],
+      "alias": "Sleep 8"
+    },
+    {
+      "patterns": [
+        "WELLHUB"
+      ],
+      "alias": "Wellhub"
+    },
+    {
+      "patterns": [
+        "GYMPASS"
+      ],
+      "alias": "Gympass"
+    },
+    {
+      "patterns": [
+        "PRIMAL PUMP",
+        "SP PRIMAL"
+      ],
+      "alias": "Primal Pump"
+    },
+    {
+      "patterns": [
+        "VETSTIL"
+      ],
+      "alias": "Vetstil"
+    },
+    {
+      "patterns": [
+        "ANICURA"
+      ],
+      "alias": "AniCura"
+    },
+    {
+      "patterns": [
+        "BORRELLVET"
+      ],
+      "alias": "Borrellvet"
+    },
+    {
+      "patterns": [
+        "MISCOTA"
+      ],
+      "alias": "Miscota"
+    },
+    {
+      "patterns": [
+        "GRANDVALIRA"
+      ],
+      "alias": "Grandvalira"
+    },
+    {
+      "patterns": [
+        "A.P.S. CENTRO GIO"
+      ],
+      "alias": "Centro Giovanni"
+    },
+    {
+      "patterns": [
+        "ONE MORE"
+      ],
+      "alias": "One More"
+    },
+    {
+      "patterns": [
+        "CARNIVAL"
+      ],
+      "alias": "Carnival"
+    },
+    {
+      "patterns": [
+        "THE HALL"
+      ],
+      "alias": "The Hall"
+    },
+    {
+      "patterns": [
+        "TICKETMASTER",
+        "TM *TICKETMASTER"
+      ],
+      "alias": "Ticketmaster"
+    },
+    {
+      "patterns": [
+        "ANDORRA TELECOM"
+      ],
+      "alias": "Andorra Telecom"
+    },
+    {
+      "patterns": [
+        "PROAP APARTAMENTS"
+      ],
+      "alias": "Proap Apartaments"
+    },
+    {
+      "patterns": [
+        "APARTAMENTS ELS A"
+      ],
+      "alias": "Apartaments Els Àngels"
+    },
+    {
+      "patterns": [
+        "ALTEA COMUNIDAD"
+      ],
+      "alias": "Altea Comunidad"
+    },
+    {
+      "patterns": [
+        "AMORTIZACIÓN TARJ",
+        "AMORTIZACION TARJ"
+      ],
+      "alias": "Amortización tarjeta"
+    },
+    {
+      "patterns": [
+        "AJUSTE TARJETA"
+      ],
+      "alias": "Ajuste tarjeta"
+    },
+    {
+      "patterns": [
+        "AVANCE DE PAGO"
+      ],
+      "alias": "Pago de tarjeta"
+    },
+    {
+      "patterns": [
+        "MYCARD"
+      ],
+      "alias": "Tarjeta MyCard"
+    },
+    {
+      "patterns": [
+        "TARJETA VISA"
+      ],
+      "alias": "Tarjeta VISA"
+    },
+    {
+      "patterns": [
+        "TRASPASO PROPIO"
+      ],
+      "alias": "Traspaso propio"
+    },
+    {
+      "patterns": [
+        "PAGO TRANSFERENCIAS"
+      ],
+      "alias": "Transferencia"
+    },
+    {
+      "patterns": [
+        "REINT.CAJERO",
+        "REINT CAJERO"
+      ],
+      "alias": "Retirada cajero"
+    },
+    {
+      "patterns": [
+        "INGRESO CAJERO"
+      ],
+      "alias": "Ingreso cajero"
+    },
+    {
+      "patterns": [
+        "OPERACION TARJETA",
+        "OPERACIÓN TARJETA"
+      ],
+      "alias": "Operación tarjeta"
+    },
+    {
+      "patterns": [
+        "VILLAMIL ROJAS MARIA JOSE",
+        "MARIA JOSE VILLAMIL"
+      ],
+      "alias": "María José Villamil"
+    },
+    {
+      "patterns": [
+        "DAVID TAYLOR"
+      ],
+      "alias": "David Taylor"
+    },
+    {
+      "patterns": [
+        "MICHAEL LOMANOV"
+      ],
+      "alias": "Michael Lomanov"
+    },
+    {
+      "patterns": [
+        "NATHALY LARA"
+      ],
+      "alias": "Nathaly Lara"
+    },
+    {
+      "patterns": [
+        "PAULA ANDREA",
+        "ARANGO ECHEVERRY"
+      ],
+      "alias": "Paula Arango"
+    },
+    {
+      "patterns": [
+        "SJOERD",
+        "MARTENS"
+      ],
+      "alias": "Sjoerd Martens"
+    },
+    {
+      "patterns": [
+        "SERGI",
+        "VILLAUBI"
+      ],
+      "alias": "Sergi Villaubí"
+    },
+    {
+      "patterns": [
+        "BARKS N  BITES",
+        "BARKS N BITES"
+      ],
+      "alias": "Barks n Bites"
+    },
+    {
+      "patterns": [
+        "YEGO"
+      ],
+      "alias": "Yego"
+    },
+    {
+      "patterns": [
+        "ACCIONA MOTOSHARING",
+        "ACCIONA"
+      ],
+      "alias": "Acciona Motosharing"
+    }
+  ]
+}
