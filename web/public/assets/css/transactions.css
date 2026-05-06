@@ -1,0 +1,133 @@
+/* Estilos específicos de la sección "Transacciones". */
+
+/* Filtros específicos: rango con presets, botones del upload/download */
+.filters .range-field{flex:0 0 auto}
+.filters .range-inputs{display:flex;align-items:center;gap:6px;margin-top:6px}
+.filters .range-inputs input{width:140px;min-width:0}
+.filters .range-sep{color:var(--text-3);font-size:13px}
+.range-presets{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.filters #upload-btn{align-self:flex-end;height:38px}
+.filters #download-transactions-btn{align-self:flex-end;height:38px}
+
+.card .period-val{font-size:14px;line-height:1.35;font-weight:500;display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.card .period-val > *{align-self:stretch}
+.card .period-val .period-arrow{color:var(--text-3);font-weight:400;font-size:12px;line-height:1;text-align:center}
+
+/* Main layout: gráfico + lista */
+.main-area{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start}
+.chart-area,.list-area{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;min-width:0}
+.chart-area{position:relative}
+.reset-corner{position:absolute;top:12px;right:12px;background:var(--panel);border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:6px 10px;font-size:12px;color:var(--text-2);cursor:pointer;font-family:inherit;z-index:2}
+.reset-corner:hover{background:var(--panel-2);color:var(--text)}
+
+.breadcrumb{font-size:13px;color:var(--text-2);margin-bottom:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.breadcrumb span{cursor:pointer;color:var(--info)}
+.breadcrumb span:hover{text-decoration:underline}
+.breadcrumb .sep{color:var(--text-3);cursor:default}
+
+.donut-box{position:relative;width:380px;height:380px;max-width:100%;aspect-ratio:1/1;margin:8px auto}
+#donut-canvas{display:block;width:100% !important;height:100% !important}
+.center-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;width:140px}
+.center-text .ct-val{font-size:22px;font-weight:600;letter-spacing:-0.01em}
+.center-text .ct-label{font-size:12px;color:var(--text-3);margin-top:4px}
+
+.hint{font-size:12px;color:var(--text-3);text-align:center;margin-top:12px}
+
+.legend{display:flex;flex-direction:column;gap:4px;margin-top:16px}
+.leg-item{display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 10px;border-radius:var(--radius-sm);transition:background 0.1s}
+.leg-item:hover{background:var(--panel-2)}
+.leg-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.leg-name{font-size:14px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.leg-val{font-size:14px;color:var(--text-2);font-weight:500}
+
+/* Lista de transacciones + cabecera/sort/search */
+.tx-list{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:var(--panel)}
+.tx-list-header{padding:12px 16px;background:var(--panel-2);font-size:13px;color:var(--text-2);display:flex;justify-content:space-between;align-items:center;font-weight:500;gap:10px}
+.tx-list-header-right{display:flex;align-items:center;gap:10px}
+.sort-menu{position:relative}
+.sort-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:0 4px 12px rgba(0,0,0,0.08);padding:4px;z-index:10;min-width:220px;display:flex;flex-direction:column}
+.sort-dropdown[hidden]{display:none}
+.sort-option{font-family:inherit;font-size:13px;text-align:left;padding:8px 12px;border:0;background:transparent;color:var(--text);cursor:pointer;border-radius:var(--radius-sm);white-space:nowrap}
+.sort-option:hover{background:var(--panel-2)}
+.sort-option.active{background:var(--panel-2);font-weight:500}
+.sort-option.active::before{content:"✓ ";color:var(--ok)}
+.tx-search{padding:10px 16px;border-top:1px solid var(--border);background:var(--panel)}
+.tx-search input{width:100%;font-size:13px;padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--panel);color:var(--text);font-family:inherit}
+.tx-search input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.tx-scroll{max-height:560px;overflow-y:auto}
+
+/* Filas de transacción */
+.tx-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--border);cursor:pointer;transition:background 0.1s}
+.tx-row:first-child{border-top:none}
+.tx-row:hover{background:var(--panel-2)}
+.tx-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.tx-info{flex:1;min-width:0}
+.tx-merchant{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.alias-badge{font-size:10px;color:var(--text-3);margin-left:6px;vertical-align:middle}
+.tx-date{font-size:12px;color:var(--text-3);margin-top:2px}
+.tx-amount{font-size:14px;font-weight:600;flex-shrink:0;text-align:right;letter-spacing:-0.01em}
+.tx-amount.positive{color:var(--ok)}
+.tx-sub{font-size:11px;color:var(--text-3);margin-top:2px;text-align:right}
+
+/* Editor inline */
+.tx-row.editing{flex-wrap:wrap;background:var(--panel-2)}
+.tx-edit-bar{display:flex;gap:8px;width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-strong);flex-wrap:wrap}
+.tx-edit-bar select{flex:1;min-width:140px;font-size:13px;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--panel);color:var(--text);font-family:inherit}
+.tx-alias-bar{align-items:center}
+.alias-label{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;font-weight:500;min-width:50px}
+.alias-input{flex:1;font-size:13px;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--panel);color:var(--text);font-family:inherit}
+.alias-input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.tx-edit-footer{width:100%;padding-top:6px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tx-suggest{font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:6px;flex:1;min-width:0}
+.tx-suggest-label{color:var(--text-3)}
+.tx-suggest-link{color:var(--info);text-decoration:underline;cursor:pointer}
+.tx-suggest-link:hover{color:var(--text);text-decoration:underline}
+.tx-edit-footer button{font-size:12px;margin-left:auto}
+.tx-edit-footer .tx-suggest + button{margin-left:auto}
+
+/* Panel de detalles (raw) dentro del editor */
+.tx-details{width:100%;margin-top:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text-2);display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.tx-details dt{color:var(--text-3);white-space:nowrap;font-weight:500}
+.tx-details dd{color:var(--text);word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px}
+
+/* Checkboxes + estado "muted" (cuando algo está excluido) */
+.tx-check,.leg-check{flex-shrink:0;width:16px;height:16px;cursor:pointer;accent-color:var(--accent)}
+.tx-row.muted,.leg-item.muted{opacity:0.4}
+.tx-row.muted:hover,.leg-item.muted:hover{opacity:0.6}
+
+/* Responsive específico de la sección */
+@media(max-width:900px){
+  .main-area{grid-template-columns:1fr;gap:16px}
+  .filters .range-field{flex:1 1 100%}
+  .filters .range-inputs input{flex:1;min-width:0;width:auto}
+  .donut-box{width:100%;max-width:320px;height:auto}
+}
+
+@media(max-width:640px){
+  .filters #upload-btn{height:44px;font-size:14px}
+  .card #s-period{font-size:14px !important}
+  .chart-area,.list-area{padding:14px;border-radius:var(--radius-md)}
+  .reset-corner{top:10px;right:10px;font-size:11px;padding:5px 8px}
+  .donut-box{max-width:260px}
+  .center-text{width:100px}
+  .center-text .ct-val{font-size:18px}
+  .center-text .ct-label{font-size:11px}
+  .leg-item{padding:10px 8px;gap:10px}
+  .leg-name{font-size:13px}
+  .leg-val{font-size:13px}
+  .tx-list-header{padding:10px 12px}
+  .tx-search{padding:8px 12px}
+  .tx-search input{font-size:16px;height:40px}
+  .tx-scroll{max-height:60vh}
+  .tx-row{padding:12px;gap:10px}
+  .tx-merchant{font-size:13px}
+  .tx-amount{font-size:14px}
+  .tx-date,.tx-sub{font-size:11px}
+  .tx-edit-bar{gap:6px}
+  .tx-edit-bar select{min-width:0;flex-basis:calc(50% - 3px);font-size:14px;height:40px}
+  .tx-edit-bar .save-btn{flex-basis:calc(50% - 3px);height:40px}
+  .tx-details{grid-template-columns:1fr;gap:2px 0;padding:10px}
+  .tx-details dt{font-size:10px;text-transform:uppercase;letter-spacing:0.04em;margin-top:6px}
+  .tx-details dt:first-child{margin-top:0}
+  .tx-details dd{font-size:12px}
+}

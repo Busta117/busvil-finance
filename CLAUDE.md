@@ -37,12 +37,15 @@ busta-finance/
 | `local/learn_rules.py` | Generates `catalogs/user_rules.json` from manual categorizations in the local datasets. |
 | `local/serve.py` | Local HTTP server. Detects XLS format, dispatches to the right parser, autosave via POST /data/<file>. |
 | `local/transaction_dashboard.html` | Local dashboard. Reads/writes via `fetch('/data/...')` to the server. |
-| `web/public/index.html` | Web dashboard. Firebase Auth login + read/write to Firestore. |
-| `web/public/assets/firebase-client.js` | Auth wrapper and Firestore CRUD. Imports `config.local.js`. |
-| `web/public/assets/config.local.js` | **Gitignored.** `firebaseConfig` + `PROJECT_ID`. Copy of `config.example.js`. |
-| `web/public/assets/xls-parsers.js` | JS port of the CaixaBank parsers, using SheetJS (`xlsx`). |
-| `web/public/assets/alias-resolver.js` | JS port of `alias_resolver.py`. |
-| `web/public/assets/common.js` | JS port of `common.py`. |
+| `web/public/index.html` | Web dashboard shell (markup only). CSS and JS live in `assets/`. |
+| `web/public/assets/css/{tokens,base,components,transactions}.css` | Styles split by scope: design tokens, base layout/typography, shared components (login/nav/toast/drawer), and transactions section. |
+| `web/public/assets/js/main.js` | ES module. Imports Firebase client, parsers and alias resolver; exposes them on `window.__fb` for the classic dashboard script. |
+| `web/public/assets/js/dashboard.js` | Classic script with the dashboard logic: render, editor, observations, batch, upload, auth gate, nav, routing. |
+| `web/public/assets/js/firebase-client.js` | Auth wrapper and Firestore CRUD. Imports `config.local.js`. |
+| `web/public/assets/js/config.local.js` | **Gitignored.** `firebaseConfig` + `PROJECT_ID`. Copy of `config.example.js`. |
+| `web/public/assets/js/xls-parsers.js` | JS port of the CaixaBank parsers, using SheetJS (`xlsx`). |
+| `web/public/assets/js/alias-resolver.js` | JS port of `alias_resolver.py`. |
+| `web/public/assets/js/common.js` | JS port of `common.py`. |
 | `web/firestore.rules` | Each `projects/{PROJECT_ID}` belongs to an `owner` (UID); only they can read/write. |
 | `catalogs/user_rules.json` | Exact merchants + patterns → category/subcategory. |
 | `catalogs/merchant_aliases.json` | Patterns → readable alias. |

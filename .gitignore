@@ -17,7 +17,7 @@ venv/
 
 # Firebase
 web/.firebase/
-web/public/assets/config.local.js
+web/public/assets/js/config.local.js
 
 # OS / editor
 .DS_Store
