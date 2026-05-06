@@ -84,11 +84,32 @@ function loadLastSelection() {
   } catch (_) { return null; }
 }
 
-function fmt(n) {
-  return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
+// Moneda: sin código = EUR. Si se pasa currency, formatea según locale de esa moneda.
+function currencyOf(txOrCode) {
+  if (!txOrCode) return (window.__fb?.DEFAULT_CURRENCY) || 'EUR';
+  if (typeof txOrCode === 'string') return txOrCode || 'EUR';
+  return txOrCode.cur || accountCurrency(txOrCode.__accountId) || 'EUR';
 }
-function fmtFull(n) {
-  return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n);
+function accountCurrency(accountId) {
+  if (!accountId) return null;
+  const acc = ACCOUNTS_BY_ID[accountId];
+  return acc && acc.default_currency ? acc.default_currency : null;
+}
+function fmt(n, code) {
+  const fn = window.__fb?.formatCurrencyShort;
+  return fn ? fn(n, code || 'EUR') : new Intl.NumberFormat('es-ES',{style:'currency',currency:code||'EUR',maximumFractionDigits:0}).format(n);
+}
+function fmtFull(n, code) {
+  const fn = window.__fb?.formatCurrency;
+  return fn ? fn(n, code || 'EUR') : new Intl.NumberFormat('es-ES',{style:'currency',currency:code||'EUR'}).format(n);
+}
+// Agrupa amounts por moneda y devuelve string listo tipo "€ 1.234 · $ 500"
+function fmtMulti(byCur, { full = false } = {}) {
+  const entries = Object.entries(byCur).filter(([, v]) => v !== 0);
+  if (!entries.length) return (full ? fmtFull(0) : fmt(0));
+  // Orden: EUR primero, luego alfabético
+  entries.sort((a, b) => (a[0] === 'EUR' ? -1 : b[0] === 'EUR' ? 1 : a[0].localeCompare(b[0])));
+  return entries.map(([c, v]) => (full ? fmtFull(v, c) : fmt(v, c))).join(' · ');
 }
 function fmtDateNatural(iso) {
   if (!iso) return '—';
@@ -128,16 +149,25 @@ function render() {
   const included = filtered.filter(isIncluded);
   const outTx = included.filter(t => t.dir === 'out');
   const inTx = included.filter(t => t.dir === 'in');
-  const totalOut = outTx.reduce((s,t)=>s+t.a,0);
-  const totalIn = inTx.reduce((s,t)=>s+t.a,0);
-  const balance = totalIn - totalOut;
+  // Agrupamos por moneda. Si solo hay una, los totales salen como un único número.
+  const outByCur = {};
+  const inByCur = {};
+  for (const t of outTx) { const c = currencyOf(t); outByCur[c] = (outByCur[c] || 0) + t.a; }
+  for (const t of inTx)  { const c = currencyOf(t); inByCur[c]  = (inByCur[c]  || 0) + t.a; }
+  const balByCur = {};
+  for (const c of new Set([...Object.keys(inByCur), ...Object.keys(outByCur)])) {
+    balByCur[c] = (inByCur[c] || 0) - (outByCur[c] || 0);
+  }
 
   document.getElementById('s-count').textContent = included.length;
-  document.getElementById('s-total').textContent = fmt(totalOut);
-  document.getElementById('s-income').textContent = fmt(totalIn);
+  document.getElementById('s-total').textContent = fmtMulti(outByCur);
+  document.getElementById('s-income').textContent = fmtMulti(inByCur);
   const balEl = document.getElementById('s-balance');
-  balEl.textContent = (balance >= 0 ? '+' : '') + fmt(balance);
-  balEl.style.color = balance >= 0 ? 'var(--ok)' : 'var(--err)';
+  const balEntries = Object.entries(balByCur);
+  const allPositive = balEntries.every(([, v]) => v >= 0);
+  const allNegative = balEntries.every(([, v]) => v < 0);
+  balEl.textContent = fmtMulti(balByCur);
+  balEl.style.color = allPositive ? 'var(--ok)' : (allNegative ? 'var(--err)' : '');
   const from = document.getElementById('date-from').value;
   const to = document.getElementById('date-to').value;
   document.getElementById('s-period').innerHTML =
@@ -177,8 +207,13 @@ function renderCats(cats, total) {
   const data = chartEntries.map(e=>e[1].total);
   const colors = labels.map(l=>COLORS[l]||'#888');
 
+  // Valor central: sumar por moneda solo las tx incluidas del rango filtrado
+  const includedAll = filtered.filter(isIncluded);
+  const donutByCur = {};
+  for (const t of includedAll) { const c = currencyOf(t); donutByCur[c] = (donutByCur[c] || 0) + t.a; }
+
   updateChart(labels, data, colors, chartEntries);
-  document.getElementById('ct-val').textContent = fmt(total);
+  document.getElementById('ct-val').textContent = fmtMulti(donutByCur);
   document.getElementById('ct-label').textContent = 'Total';
   document.getElementById('dash-title').textContent = 'Movimientos por categoría';
   document.getElementById('dash-sub').textContent = 'Haz clic en una sección para ver subcategorías';
@@ -207,8 +242,13 @@ function renderSubcats(catName, items) {
   const colors = chartEntries.map((_,i)=>SUB_COLORS[i % SUB_COLORS.length]);
   const total = items.filter(t => !excludedIds.has(t.id) && !excludedSubs.has(catName + '::' + t.sub)).reduce((s,t)=>s+t.a,0);
 
+  const subsByCur = {};
+  for (const t of items.filter(x => !excludedIds.has(x.id) && !excludedSubs.has(catName + '::' + x.sub))) {
+    const c = currencyOf(t); subsByCur[c] = (subsByCur[c] || 0) + t.a;
+  }
+
   updateChart(labels, data, colors, chartEntries);
-  document.getElementById('ct-val').textContent = fmt(total);
+  document.getElementById('ct-val').textContent = fmtMulti(subsByCur);
   document.getElementById('ct-label').textContent = catName;
   document.getElementById('dash-title').textContent = catName;
   document.getElementById('dash-sub').textContent = 'Subcategorías · clic en sección para ver transacciones';
@@ -299,7 +339,7 @@ function updateChart(labels, data, colors, sorted) {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: ctx => ' ' + fmtFull(ctx.raw)
+            label: ctx => ' ' + fmt(ctx.raw)
           }
         }
       },
@@ -374,7 +414,7 @@ function renderList(items, subtitle, color) {
         <div class="tx-date">${sub}</div>
       </div>
       <div>
-        <div class="${amountClass}">${sign}${fmtFull(t.a)}</div>
+        <div class="${amountClass}">${sign}${fmtFull(t.a, currencyOf(t))}</div>
         <div class="tx-sub">${t.sub}</div>
       </div>`;
     const check = row.querySelector('.tx-check');
@@ -1499,19 +1539,18 @@ async function loadUserAndAliasRules() {
   return { userRules, aliasRules };
 }
 
-async function processAndUploadXls(file, last4) {
+async function processAndUploadXls(file, { last4, currency } = {}) {
   const { userRules, aliasRules } = await loadUserAndAliasRules();
   const { accountId, account, transactions } = await window.__fb.parseXls(file, {
-    last4, aliasRules, userRules,
+    last4, currency, aliasRules, userRules,
   });
   // Si la cuenta ya existe, preserva campos editados por el usuario.
   const existing = await window.__fb.getAccount(accountId);
   const accToWrite = Object.assign({}, account);
   if (existing) {
-    for (const k of ['iban','bank','alias','card_type','holder']) {
+    for (const k of ['iban','bank','alias','card_type','holder','default_currency']) {
       if (existing[k]) accToWrite[k] = existing[k];
     }
-    // Dedup: cargar ids existentes y filtrar
     const existingTx = await window.__fb.listTransactions(accountId);
     const existingIds = new Set(existingTx.map(t => t.id));
     const newOnes = transactions.filter(t => !existingIds.has(t.id));
@@ -1519,10 +1558,78 @@ async function processAndUploadXls(file, last4) {
     if (newOnes.length) await window.__fb.upsertTransactionsBatch(accountId, newOnes);
     return { accountId, added: newOnes.length, total: existingTx.length + newOnes.length };
   }
-  // Cuenta nueva
   await window.__fb.setAccount(accountId, accToWrite);
   await window.__fb.upsertTransactionsBatch(accountId, transactions);
   return { accountId, added: transactions.length, total: transactions.length };
+}
+
+// ---- Modal de prompt para upload ----
+function showUploadModal({ needsLast4, needsCurrency, hint }) {
+  return new Promise((resolve) => {
+    const backdrop = document.getElementById('upload-modal-backdrop');
+    const modal = document.getElementById('upload-modal');
+    const form = document.getElementById('upload-modal-form');
+    const hintEl = document.getElementById('upload-modal-hint');
+    const last4Field = document.getElementById('upload-field-last4');
+    const last4Input = document.getElementById('upload-last4');
+    const curField = document.getElementById('upload-field-currency');
+    const curSelect = document.getElementById('upload-currency');
+    const cancelBtn = document.getElementById('upload-modal-cancel');
+
+    // Poblar select de monedas
+    curSelect.innerHTML = '';
+    (window.__fb.CURRENCIES || []).forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.code;
+      opt.textContent = c.label;
+      if (c.code === (window.__fb.DEFAULT_CURRENCY || 'EUR')) opt.selected = true;
+      curSelect.appendChild(opt);
+    });
+
+    hintEl.textContent = hint || '';
+    hintEl.style.display = hint ? '' : 'none';
+    last4Field.hidden = !needsLast4;
+    last4Input.value = '';
+    curField.hidden = !needsCurrency;
+
+    function close(result) {
+      modal.classList.remove('open');
+      backdrop.classList.remove('open');
+      setTimeout(() => {
+        modal.setAttribute('hidden', '');
+        backdrop.setAttribute('hidden', '');
+      }, 200);
+      form.onsubmit = null;
+      cancelBtn.onclick = null;
+      backdrop.onclick = null;
+      resolve(result);
+    }
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const result = {};
+      if (needsLast4) {
+        const v = last4Input.value.trim();
+        if (!/^\d{4}$/.test(v)) {
+          last4Input.focus();
+          last4Input.style.outlineColor = 'var(--err)';
+          return;
+        }
+        result.last4 = v;
+      }
+      if (needsCurrency) result.currency = curSelect.value;
+      close(result);
+    };
+    cancelBtn.onclick = () => close(null);
+    backdrop.onclick = () => close(null);
+
+    backdrop.removeAttribute('hidden');
+    modal.removeAttribute('hidden');
+    requestAnimationFrame(() => {
+      backdrop.classList.add('open');
+      modal.classList.add('open');
+      (needsLast4 ? last4Input : curSelect).focus();
+    });
+  });
 }
 
 document.getElementById('upload-input').addEventListener('change', async (e) => {
@@ -1530,20 +1637,23 @@ document.getElementById('upload-input').addEventListener('change', async (e) => 
   if (!file) return;
   setStatus('Procesando XLS…');
   try {
-    let result;
-    try {
-      result = await processAndUploadXls(file);
-    } catch (err) {
-      if (err.code === 'NEEDS_LAST4') {
-        const last4 = prompt('Parece un extracto de tarjeta de crédito.\nIntroduce los últimos 4 dígitos:');
-        if (!last4 || !/^\d{4}$/.test(last4.trim())) {
-          setStatus('Cancelado', 'err');
-          return;
-        }
-        setStatus('Procesando XLS…');
-        result = await processAndUploadXls(file, last4.trim());
-      } else { throw err; }
+    // Inspección previa para decidir qué campos pedir.
+    const info = await window.__fb.inspectXls(file);
+    const needsLast4 = !!info.needsLast4;
+    const needsCurrency = !!info.needsCurrency;
+    let opts = {};
+    if (needsLast4 || needsCurrency) {
+      const hint = needsLast4 && needsCurrency
+        ? 'Es un extracto de tarjeta de crédito. Necesitamos los últimos 4 dígitos y la moneda.'
+        : (needsLast4
+            ? 'Es un extracto de tarjeta de crédito. Necesitamos los últimos 4 dígitos.'
+            : 'El extracto no indica la moneda. Selecciónala para las transacciones cargadas.');
+      const answers = await showUploadModal({ needsLast4, needsCurrency, hint });
+      if (!answers) { setStatus('Cancelado', 'err'); setTimeout(() => setStatus('', null), 1500); return; }
+      opts = answers;
+      setStatus('Procesando XLS…');
     }
+    const result = await processAndUploadXls(file, opts);
     setStatus(`Añadidas ${result.added} nuevas ✓`, 'ok');
     setTimeout(() => setStatus('', null), 2000);
     const chosen = await refreshDatasetList(new Set([result.accountId]));

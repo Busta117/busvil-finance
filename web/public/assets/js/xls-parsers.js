@@ -105,7 +105,7 @@ function accountIdFromCuenta(cuentaStr) {
   return digits.slice(-10) || "unknown";
 }
 
-function buildAccountInfoFromCuenta(cuentaStr) {
+function buildAccountInfoFromCuenta(cuentaStr, defaultCurrency) {
   const digits = (cuentaStr || "").replace(/\D/g, "");
   const bank = BANK_CODES[digits.slice(0, 4)] || "";
   return {
@@ -113,10 +113,11 @@ function buildAccountInfoFromCuenta(cuentaStr) {
     bank,
     alias: "",
     kind: "account",
+    default_currency: defaultCurrency || "EUR",
   };
 }
 
-async function parseAccount(matrix, aliasRules, userRules) {
+async function parseAccount(matrix, aliasRules, userRules, fallbackCurrency) {
   const headerIdx = findHeaderRow(matrix);
   if (headerIdx < 0) throw new Error("No se encontró cabecera 'F. Operación'");
   const parsed = [];
@@ -135,11 +136,13 @@ async function parseAccount(matrix, aliasRules, userRules) {
     const m = parseMerchantAccount(row[14], row[22], isIncome);
     const c = (row[17] || "").toString().trim();
     const [cat, sub] = categorize(m, isIncome, userRules);
+    const divisa = (row[3] || "").toString().trim().toUpperCase();
     const tx = {
       d,
       a: Math.round(Math.abs(amountRaw) * 100) / 100,
       dir: isIncome ? "in" : "out",
       m, c, cat, sub,
+      cur: divisa || fallbackCurrency || "EUR",
       raw: buildRawAccount(row),
     };
     tx.alias = computeAlias(tx, aliasRules);
@@ -155,7 +158,11 @@ async function parseAccount(matrix, aliasRules, userRules) {
     if (kv.k === "Cuenta") { cuentaStr = kv.v; break; }
   }
   const accountId = accountIdFromCuenta(cuentaStr);
-  const account = buildAccountInfoFromCuenta(cuentaStr);
+  // Detectar la moneda dominante del XLS si hay alguna.
+  const curCounts = {};
+  for (const t of parsed) curCounts[t.cur] = (curCounts[t.cur] || 0) + 1;
+  const dominantCur = Object.keys(curCounts).sort((a, b) => curCounts[b] - curCounts[a])[0] || fallbackCurrency || "EUR";
+  const account = buildAccountInfoFromCuenta(cuentaStr, dominantCur);
 
   return { accountId, account, transactions: parsed };
 }
@@ -187,7 +194,7 @@ function buildRawCC(row) {
   return out;
 }
 
-async function parseCreditCard(matrix, last4, aliasRules, userRules) {
+async function parseCreditCard(matrix, last4, aliasRules, userRules, fallbackCurrency) {
   if (!last4 || !/^\d{4}$/.test(last4)) {
     throw new Error("Se requieren 4 dígitos (últimos 4 de la tarjeta).");
   }
@@ -206,6 +213,7 @@ async function parseCreditCard(matrix, last4, aliasRules, userRules) {
       d, a,
       dir: isIncome ? "in" : "out",
       m, c: "", cat, sub,
+      cur: fallbackCurrency || "EUR",
       raw: buildRawCC(row),
     };
     tx.alias = computeAlias(tx, aliasRules);
@@ -224,14 +232,39 @@ async function parseCreditCard(matrix, last4, aliasRules, userRules) {
     last4,
     card_type: "",
     holder: "",
+    default_currency: fallbackCurrency || "EUR",
   };
   return { accountId, account, transactions: parsed };
 }
 
 // ===== Dispatcher =====
 
+// Pre-inspección para saber qué hay que pedirle al usuario antes de parsear.
+// Devuelve { needsLast4, needsCurrency, kind } sin lanzar.
+export async function inspectXls(file) {
+  const buf = await file.arrayBuffer();
+  const wb = readWorkbookFromArrayBuffer(buf);
+  const sheet = wb.Sheets[wb.SheetNames[0]];
+  const matrix = sheetToMatrix(sheet);
+
+  if (isCreditCard(matrix)) {
+    // La tarjeta nunca trae columna de divisa.
+    return { kind: "credit_card", needsLast4: true, needsCurrency: true };
+  }
+  // Cuenta corriente: si alguna fila tiene divisa, no hay que preguntar.
+  const headerIdx = findHeaderRow(matrix);
+  let hasCurrency = false;
+  if (headerIdx >= 0) {
+    for (let i = headerIdx + 1; i < matrix.length; i++) {
+      const divisa = (matrix[i]?.[3] || "").toString().trim();
+      if (divisa) { hasCurrency = true; break; }
+    }
+  }
+  return { kind: "account", needsLast4: false, needsCurrency: !hasCurrency };
+}
+
 export async function parseXls(file, opts = {}) {
-  const { last4, aliasRules = [], userRules = { merchants: {}, patterns: [] } } = opts;
+  const { last4, currency, aliasRules = [], userRules = { merchants: {}, patterns: [] } } = opts;
   const buf = await file.arrayBuffer();
   const wb = readWorkbookFromArrayBuffer(buf);
   const sheet = wb.Sheets[wb.SheetNames[0]];
@@ -243,8 +276,8 @@ export async function parseXls(file, opts = {}) {
       err.code = "NEEDS_LAST4";
       throw err;
     }
-    return parseCreditCard(matrix, last4, aliasRules, userRules);
+    return parseCreditCard(matrix, last4, aliasRules, userRules, currency);
   }
   // fallback: cuenta corriente
-  return parseAccount(matrix, aliasRules, userRules);
+  return parseAccount(matrix, aliasRules, userRules, currency);
 }

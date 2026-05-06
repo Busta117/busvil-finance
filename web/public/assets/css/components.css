@@ -89,3 +89,21 @@
 .dataset-option:hover{background:var(--panel-2)}
 .dataset-option input[type=checkbox]{flex-shrink:0;accent-color:var(--accent);cursor:pointer}
 .dataset-option span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Modal genérico (para upload form) */
+.modal-backdrop{position:fixed;inset:0;background:rgba(31,29,25,0.45);z-index:200;opacity:0;transition:opacity 0.2s;pointer-events:none}
+.modal-backdrop[hidden]{display:none}
+.modal-backdrop.open{opacity:1;pointer-events:auto}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,calc(-50% + 12px));z-index:201;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:0 12px 40px rgba(0,0,0,0.18);max-width:420px;width:calc(100vw - 32px);opacity:0;transition:opacity 0.2s, transform 0.2s;font-family:var(--font-sans)}
+.modal[hidden]{display:none}
+.modal.open{opacity:1;transform:translate(-50%,-50%)}
+.modal-header{padding:18px 20px 12px;border-bottom:1px solid var(--border)}
+.modal-header h3{font-size:15px;font-weight:600;letter-spacing:-0.01em;color:var(--text);margin:0}
+.modal-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:14px}
+.modal-hint{font-size:13px;color:var(--text-2);margin:0;line-height:1.5}
+.modal-field{display:flex;flex-direction:column;gap:4px}
+.modal-field[hidden]{display:none}
+.modal-field label{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;font-weight:500}
+.modal-field input,.modal-field select{font-size:14px;padding:8px 12px;height:38px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--panel);color:var(--text);font-family:inherit}
+.modal-field input:focus,.modal-field select:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
