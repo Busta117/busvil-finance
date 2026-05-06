@@ -76,9 +76,15 @@
     </div>
     <div class="header-aux">
       <div class="dataset-aux">
-        <label for="dataset-select">Dataset</label>
+        <label>Dataset</label>
         <div class="dataset-row">
-          <select id="dataset-select"></select>
+          <div class="dataset-multi">
+            <button class="dataset-multi-toggle" id="dataset-toggle" aria-haspopup="listbox" aria-expanded="false">
+              <span id="dataset-label">—</span>
+              <span class="dataset-multi-caret">▾</span>
+            </button>
+            <div class="dataset-multi-menu" id="dataset-menu" role="listbox" hidden></div>
+          </div>
           <button class="icon-btn" id="account-toggle" title="Detalles de la cuenta" aria-expanded="false">ⓘ</button>
         </div>
       </div>

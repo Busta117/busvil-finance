@@ -31,7 +31,10 @@ let RAW = [];
 let TAXONOMY = {};
 let ACCOUNT = {iban:'', bank:'', alias:'', kind:'account', last4:'', card_type:'', holder:''};
 let dirty = false;
-let currentDataset = null;
+let currentDataset = null;           // primario: primer dataset activo (compat con edits)
+let currentDatasets = new Set();     // conjunto de accountIds activos
+let ACCOUNTS_BY_ID = {};             // cache de metadatos de cuentas por id
+let ALL_ACCOUNTS = [];               // lista completa (para poblar el popover)
 let excludedIds = new Set();
 let excludedCats = new Set();
 let excludedSubs = new Set();
@@ -39,10 +42,14 @@ let currentSub = null;        // subcategoría seleccionada dentro de currentCat
 let searchText = '';
 let sortMode = 'date-desc';
 
-// -------- Cache UI state en localStorage, por dataset --------
+// -------- Cache UI state en localStorage, por selección de datasets --------
+// La key agrupa 1..N accountIds ordenados alfabéticamente.
 const UI_STATE_PREFIX = 'busta-ui-state:';
+function uiStateKeyFor(idsSet) {
+  return [...idsSet].sort().join('|');
+}
 function saveUiState() {
-  if (!currentDataset) return;
+  if (!currentDatasets || !currentDatasets.size) return;
   const state = {
     from: document.getElementById('date-from')?.value || '',
     to: document.getElementById('date-to')?.value || '',
@@ -51,12 +58,28 @@ function saveUiState() {
     sortMode,
     preset: activePreset,
   };
-  try { localStorage.setItem(UI_STATE_PREFIX + currentDataset, JSON.stringify(state)); }
+  try { localStorage.setItem(UI_STATE_PREFIX + uiStateKeyFor(currentDatasets), JSON.stringify(state)); }
   catch (_) {}
 }
-function loadUiState(accountId) {
+function loadUiStateByKey(key) {
   try {
-    const raw = localStorage.getItem(UI_STATE_PREFIX + accountId);
+    const raw = localStorage.getItem(UI_STATE_PREFIX + key);
+    return raw ? JSON.parse(raw) : null;
+  } catch (_) { return null; }
+}
+// Compat: acepta un accountId (1 dataset) o una selección (Set).
+function loadUiState(accountIdOrSet) {
+  if (accountIdOrSet instanceof Set) return loadUiStateByKey(uiStateKeyFor(accountIdOrSet));
+  return loadUiStateByKey(accountIdOrSet);
+}
+
+const LAST_DATASETS_KEY = 'busta-last-datasets';
+function saveLastSelection() {
+  try { localStorage.setItem(LAST_DATASETS_KEY, JSON.stringify([...currentDatasets])); } catch (_) {}
+}
+function loadLastSelection() {
+  try {
+    const raw = localStorage.getItem(LAST_DATASETS_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch (_) { return null; }
 }
@@ -328,7 +351,17 @@ function renderList(items, subtitle, color) {
     row.className = 'tx-row' + (isExcluded ? ' muted' : '');
     row.dataset.id = t.id;
     const alias = t.alias || t.m || t.c || 'Sin descripción';
-    const sub = [t.d, t.c].filter(Boolean).join(' · ');
+    // Cuando hay varios datasets activos, añadimos a qué cuenta pertenece.
+    let acctTag = '';
+    if (currentDatasets.size > 1 && t.__accountId) {
+      const acc = ACCOUNTS_BY_ID[t.__accountId];
+      if (acc) {
+        acctTag = acc.alias || (acc.kind === 'credit_card' ? `··${acc.last4 || ''}` : (t.__accountId.slice(-4)));
+      } else {
+        acctTag = t.__accountId;
+      }
+    }
+    const sub = [t.d, t.c, acctTag].filter(Boolean).join(' · ');
     const sign = t.dir === 'in' ? '+' : '−';
     const amountClass = 'tx-amount' + (t.dir === 'in' ? ' positive' : '');
     const catExcluded = excludedCats.has(t.cat) || excludedSubs.has(t.cat + '::' + t.sub);
@@ -447,7 +480,7 @@ function openEditor(row, t) {
   applyBtn.className = 'save-btn';
   applyBtn.textContent = 'Aplicar';
   applyBtn.onclick = async () => {
-    const idx = RAW.findIndex(x => x.id === t.id);
+    const idx = RAW.findIndex(x => x.id === t.id && x.__accountId === t.__accountId);
     if (idx < 0) return;
     const prevCat = t.cat;
     const prevSub = t.sub;
@@ -469,7 +502,9 @@ function openEditor(row, t) {
 
     setStatus('Guardando…');
     try {
-      await window.__fb.upsertTransaction(currentDataset, RAW[idx]);
+      const txAccountId = RAW[idx].__accountId || currentDataset;
+      const { __accountId, ...txToSave } = RAW[idx];
+      await window.__fb.upsertTransaction(txAccountId, txToSave);
 
       if (catChanged || aliasChanged) {
         recordObservation({
@@ -493,7 +528,7 @@ function openEditor(row, t) {
   // a todas las tx cuyo alias original coincida con el de la tx editada.
   const aliasForBatch = (t.alias || '').trim();
   const batchCandidates = aliasForBatch
-    ? RAW.filter(x => x.id !== t.id && (x.alias || '').trim() === aliasForBatch)
+    ? RAW.filter(x => !(x.id === t.id && x.__accountId === t.__accountId) && (x.alias || '').trim() === aliasForBatch)
     : [];
   let batchBtn = null;
   if (batchCandidates.length > 0) {
@@ -520,7 +555,7 @@ function openEditor(row, t) {
         const writes = [];
         const observations = [];
         for (const tx of targets) {
-          const idx2 = RAW.findIndex(x => x.id === tx.id);
+          const idx2 = RAW.findIndex(x => x.id === tx.id && x.__accountId === tx.__accountId);
           if (idx2 < 0) continue;
           const prevC = RAW[idx2].cat;
           const prevS = RAW[idx2].sub;
@@ -534,7 +569,9 @@ function openEditor(row, t) {
             RAW[idx2].alias_manual = true;
             aliasDidChange = prevA !== newAliasRaw;
           }
-          writes.push(window.__fb.upsertTransaction(currentDataset, RAW[idx2]));
+          const txAccId = RAW[idx2].__accountId || currentDataset;
+          const { __accountId, ...txToSave } = RAW[idx2];
+          writes.push(window.__fb.upsertTransaction(txAccId, txToSave));
           if (catDidChange || aliasDidChange) {
             observations.push({
               merchant: RAW[idx2].m, txId: RAW[idx2].id,
@@ -1167,21 +1204,29 @@ function fmtDatasetLabel(ds) {
   return bank ? `${bank} · ${last4}` : acctNum;
 }
 
-async function refreshDatasetList(preferredId) {
-  const sel = document.getElementById('dataset-select');
+async function refreshDatasetList(preferredIds) {
   try {
     const accounts = await window.__fb.listAccounts();
-    // Añadir `name` (id) y `count`/`from`/`to` para compatibilidad con fmtDatasetLabel
-    // Necesitamos al menos el count: hacemos una query por account.
-    // Para no pagar N lecturas innecesarias aquí, dejamos count/from/to vacíos;
-    // se rellenan al cargar el dataset.
-    sel.innerHTML = '';
+    ALL_ACCOUNTS = accounts;
+    ACCOUNTS_BY_ID = {};
+    for (const acc of accounts) ACCOUNTS_BY_ID[acc.id] = acc;
+
+    const menu = document.getElementById('dataset-menu');
+    menu.innerHTML = '';
     if (!accounts.length) {
-      const opt = document.createElement('option');
-      opt.value = ''; opt.textContent = '— ningún dataset —';
-      sel.appendChild(opt);
+      menu.innerHTML = '<div style="padding:10px;font-size:13px;color:var(--text-3)">— ningún dataset —</div>';
+      document.getElementById('dataset-label').textContent = '—';
       return null;
     }
+
+    const preferredSet = new Set(preferredIds instanceof Set ? [...preferredIds]
+                                 : (Array.isArray(preferredIds) ? preferredIds
+                                 : (preferredIds ? [preferredIds] : [])));
+    // Si no hay seleccion previa, elegimos el último (convención actual)
+    const chosenIds = preferredSet.size
+      ? [...preferredSet].filter(id => accounts.some(a => a.id === id))
+      : [accounts[accounts.length - 1].id];
+
     accounts.forEach(acc => {
       const ds = {
         name: acc.id,
@@ -1191,24 +1236,65 @@ async function refreshDatasetList(preferredId) {
         last4: acc.last4 || '',
         card_type: acc.card_type || '',
       };
-      const opt = document.createElement('option');
-      opt.value = acc.id;
-      opt.textContent = fmtDatasetLabel(ds);
-      sel.appendChild(opt);
+      const label = fmtDatasetLabel(ds);
+      const row = document.createElement('label');
+      row.className = 'dataset-option';
+      const isChecked = chosenIds.includes(acc.id);
+      row.innerHTML = `<input type="checkbox" value="${acc.id}" ${isChecked ? 'checked' : ''}><span>${label}</span>`;
+      row.querySelector('input').addEventListener('change', onDatasetToggle);
+      menu.appendChild(row);
     });
-    const ids = accounts.map(a => a.id);
-    const chosen = preferredId && ids.includes(preferredId) ? preferredId : ids[ids.length - 1];
-    sel.value = chosen;
-    return chosen;
+
+    return new Set(chosenIds);
   } catch (err) {
-    sel.innerHTML = '<option value="">Error al listar</option>';
+    const menu = document.getElementById('dataset-menu');
+    if (menu) menu.innerHTML = '<div style="padding:10px;color:var(--err)">Error al listar</div>';
     throw err;
   }
 }
 
-async function loadDataset(accountId) {
-  currentDataset = accountId;
-  const savedState = loadUiState(accountId);
+function updateDatasetLabel() {
+  const el = document.getElementById('dataset-label');
+  if (!el) return;
+  const active = [...currentDatasets];
+  if (active.length === 0) { el.textContent = '—'; return; }
+  if (active.length === 1) {
+    const acc = ACCOUNTS_BY_ID[active[0]];
+    if (!acc) { el.textContent = active[0]; return; }
+    el.textContent = fmtDatasetLabel({
+      name: acc.id, alias: acc.alias || '', bank: acc.bank || '',
+      kind: acc.kind || 'account', last4: acc.last4 || '', card_type: acc.card_type || '',
+    });
+    return;
+  }
+  el.textContent = `${active.length} datasets`;
+}
+
+async function onDatasetToggle(e) {
+  const id = e.target.value;
+  const checked = e.target.checked;
+  const next = new Set(currentDatasets);
+  if (checked) next.add(id);
+  else next.delete(id);
+  if (!next.size) {
+    // No permitir 0 seleccionados: vuelve a marcar el checkbox.
+    e.target.checked = true;
+    return;
+  }
+  await loadDatasets(next);
+}
+
+function setAccountDrawerVisible(visible) {
+  const btn = document.getElementById('account-toggle');
+  if (!btn) return;
+  btn.style.display = visible ? '' : 'none';
+}
+
+async function loadDatasets(idsSet) {
+  currentDatasets = new Set(idsSet);
+  currentDataset = [...currentDatasets][0] || null;
+  const stateKey = uiStateKeyFor(currentDatasets);
+  const savedState = loadUiStateByKey(stateKey);
   currentCat = savedState?.cat || null;
   currentSub = savedState?.sub || null;
   if (savedState?.sortMode) sortMode = savedState.sortMode;
@@ -1219,33 +1305,71 @@ async function loadDataset(accountId) {
   const searchEl = document.getElementById('tx-search-input');
   if (searchEl) searchEl.value = '';
   updateSortUI();
+
   try {
-    const account = await window.__fb.getAccount(accountId);
-    const transactions = await window.__fb.listTransactions(accountId);
-    RAW = transactions;
-    // TAXONOMY viene desde Firestore config (o fallback a la local)
+    // TAXONOMY global (solo una vez)
     const taxCfg = await window.__fb.getConfig('taxonomy');
     if (taxCfg && taxCfg.taxonomy) TAXONOMY = taxCfg.taxonomy;
-    ACCOUNT = Object.assign({iban:'', bank:'', alias:'', kind:'account', last4:'', card_type:'', holder:''}, account || {});
-    const drawer = document.getElementById('account-panel');
-    drawer.setAttribute('data-kind', ACCOUNT.kind || 'account');
-    const tag = document.getElementById('acct-kind-tag');
-    tag.textContent = ACCOUNT.kind === 'credit_card' ? 'Tarjeta de crédito' : 'Cuenta corriente';
-    document.getElementById('acct-alias').value = ACCOUNT.alias;
-    document.getElementById('acct-bank').value = ACCOUNT.bank;
-    document.getElementById('acct-iban').value = ACCOUNT.iban || '';
-    document.getElementById('acct-card-type').value = ACCOUNT.card_type || '';
-    document.getElementById('acct-last4').value = ACCOUNT.last4 || '';
-    document.getElementById('acct-holder').value = ACCOUNT.holder || '';
+
+    // Cargar accounts + transacciones en paralelo para todos los datasets activos.
+    const ids = [...currentDatasets];
+    const results = await Promise.all(ids.map(async (id) => {
+      const [acc, txs] = await Promise.all([
+        ACCOUNTS_BY_ID[id] ? Promise.resolve(ACCOUNTS_BY_ID[id]) : window.__fb.getAccount(id),
+        window.__fb.listTransactions(id),
+      ]);
+      return { id, account: acc, txs };
+    }));
+
+    // RAW unificado, cada tx marcada con su accountId.
+    RAW = [];
+    for (const r of results) {
+      ACCOUNTS_BY_ID[r.id] = r.account;
+      for (const t of r.txs) RAW.push(Object.assign({}, t, { __accountId: r.id }));
+    }
+
+    // Drawer de detalles solo con 1 dataset.
+    const single = ids.length === 1;
+    setAccountDrawerVisible(single);
+    if (single) {
+      const acc = results[0].account || {};
+      ACCOUNT = Object.assign({iban:'', bank:'', alias:'', kind:'account', last4:'', card_type:'', holder:''}, acc);
+      const drawer = document.getElementById('account-panel');
+      drawer.setAttribute('data-kind', ACCOUNT.kind || 'account');
+      const tag = document.getElementById('acct-kind-tag');
+      tag.textContent = ACCOUNT.kind === 'credit_card' ? 'Tarjeta de crédito' : 'Cuenta corriente';
+      document.getElementById('acct-alias').value = ACCOUNT.alias;
+      document.getElementById('acct-bank').value = ACCOUNT.bank;
+      document.getElementById('acct-iban').value = ACCOUNT.iban || '';
+      document.getElementById('acct-card-type').value = ACCOUNT.card_type || '';
+      document.getElementById('acct-last4').value = ACCOUNT.last4 || '';
+      document.getElementById('acct-holder').value = ACCOUNT.holder || '';
+    }
+
     if (RAW.length) {
       const dates = RAW.map(t => t.d).sort();
       document.getElementById('date-from').value = savedState?.from || dates[0];
       document.getElementById('date-to').value = savedState?.to || dates[dates.length - 1];
     }
+
+    updateDatasetLabel();
+    updateDatasetMenuCheckboxes();
+    saveLastSelection();
     render();
   } catch (err) {
     showLoadError(err);
   }
+}
+
+// Retrocompat: mantén loadDataset como alias para un solo dataset.
+async function loadDataset(accountId) {
+  return loadDatasets(new Set([accountId]));
+}
+
+function updateDatasetMenuCheckboxes() {
+  document.querySelectorAll('#dataset-menu input[type=checkbox]').forEach(cb => {
+    cb.checked = currentDatasets.has(cb.value);
+  });
 }
 
 async function afterAuth() {
@@ -1257,9 +1381,10 @@ async function afterAuth() {
   }
   await loadSuggestionRules();
   try {
-    const chosen = await refreshDatasetList();
-    if (chosen) {
-      await loadDataset(chosen);
+    const lastSelection = loadLastSelection();
+    const chosen = await refreshDatasetList(lastSelection || undefined);
+    if (chosen && chosen.size) {
+      await loadDatasets(chosen);
     } else {
       document.querySelector('.wrap').insertAdjacentHTML('afterbegin',
         '<div style="padding:16px;border:1px solid var(--border);border-radius:var(--radius-md);margin-bottom:16px;background:var(--panel)">' +
@@ -1271,8 +1396,23 @@ async function afterAuth() {
   }
 }
 
-document.getElementById('dataset-select').addEventListener('change', (e) => {
-  if (e.target.value) loadDataset(e.target.value);
+// Popover del selector de datasets
+document.getElementById('dataset-toggle').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const menu = document.getElementById('dataset-menu');
+  const btn = document.getElementById('dataset-toggle');
+  const open = menu.hasAttribute('hidden');
+  if (open) { menu.removeAttribute('hidden'); btn.setAttribute('aria-expanded','true'); }
+  else { menu.setAttribute('hidden',''); btn.setAttribute('aria-expanded','false'); }
+});
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('dataset-menu');
+  const btn = document.getElementById('dataset-toggle');
+  if (!menu || menu.hasAttribute('hidden')) return;
+  if (!menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.setAttribute('hidden','');
+    btn.setAttribute('aria-expanded','false');
+  }
 });
 
 document.getElementById('upload-btn').addEventListener('click', () => {
@@ -1325,9 +1465,11 @@ function onAccountInput(field) {
     // Debounce: guarda 400ms después del último cambio
     accountSaveTimer = setTimeout(async () => {
       await autoSave();
-      // Re-lee /data/list para que el dropdown refleje los cambios
+      // Re-lee la lista de cuentas para que el popover refleje los cambios
       if (field === 'alias' || field === 'bank' || field === 'card_type') {
-        await refreshDatasetList(currentDataset);
+        await refreshDatasetList(currentDatasets);
+        updateDatasetLabel();
+        updateDatasetMenuCheckboxes();
       }
     }, 400);
   };
@@ -1404,8 +1546,8 @@ document.getElementById('upload-input').addEventListener('change', async (e) => 
     }
     setStatus(`Añadidas ${result.added} nuevas ✓`, 'ok');
     setTimeout(() => setStatus('', null), 2000);
-    const chosen = await refreshDatasetList(result.accountId);
-    if (chosen) await loadDataset(chosen);
+    const chosen = await refreshDatasetList(new Set([result.accountId]));
+    if (chosen && chosen.size) await loadDatasets(chosen);
   } catch (err) {
     setStatus('Error al subir', 'err');
     alert('No se pudo procesar el archivo: ' + err.message);

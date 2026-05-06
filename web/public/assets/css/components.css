@@ -76,3 +76,16 @@
 @media(max-width:640px){
   .toast{bottom:16px;font-size:12px;padding:9px 14px}
 }
+
+/* Dataset multi-select (popover con checkboxes) */
+.dataset-multi{position:relative}
+.dataset-multi-toggle{display:inline-flex;align-items:center;gap:8px;font-size:12px;padding:5px 10px;height:28px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--panel);color:var(--text-2);cursor:pointer;font-family:inherit;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dataset-multi-toggle:hover,.dataset-multi-toggle[aria-expanded="true"]{color:var(--text)}
+.dataset-multi-toggle #dataset-label{overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;text-align:left}
+.dataset-multi-caret{font-size:10px;color:var(--text-3);flex-shrink:0}
+.dataset-multi-menu{position:absolute;top:calc(100% + 6px);left:0;min-width:240px;max-width:320px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:0 4px 12px rgba(0,0,0,0.08);padding:4px;z-index:40;display:flex;flex-direction:column;max-height:60vh;overflow-y:auto}
+.dataset-multi-menu[hidden]{display:none}
+.dataset-option{display:flex;align-items:center;gap:10px;padding:8px 10px;font-size:13px;color:var(--text);cursor:pointer;border-radius:var(--radius-sm);font-family:inherit;border:0;background:transparent;text-align:left;width:100%}
+.dataset-option:hover{background:var(--panel-2)}
+.dataset-option input[type=checkbox]{flex-shrink:0;accent-color:var(--accent);cursor:pointer}
+.dataset-option span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
